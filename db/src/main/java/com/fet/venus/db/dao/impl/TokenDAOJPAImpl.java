@@ -4,15 +4,16 @@ import com.fet.venus.db.dao.ITokenDAO;
 import com.fet.venus.db.models.Token;
 import com.fet.venus.db.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository("tokenDBDAO")
-@RequiredArgsConstructor
 public class TokenDAOJPAImpl implements ITokenDAO {
 
-    private final TokenRepository repository;
+    @Autowired
+    private TokenRepository repository;
 
     @Override
     public void insertToken(Token token) {
