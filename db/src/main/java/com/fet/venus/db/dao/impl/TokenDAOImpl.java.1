@@ -1,0 +1,71 @@
+package com.fet.venus.db.dao.impl;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+
+import com.fet.venus.db.dao.ITokenDAO;
+import com.fet.venus.db.models.Token;
+import com.google.common.base.Preconditions;
+
+/**
+ * <p>
+ * Title: UserDAO.java
+ * </p>
+ * <p>
+ * Description: 此處要增加事務的註解，以便spring在執行到這裡是，將session查詢注入事務的管理。
+ * </p>
+ * <p>
+ * Copyright: Copyright (c) 2007
+ * </p>
+ * <p>
+ * Company:
+ * </p>
+ * 
+ * @author : Ray Yang
+ * @create date : 2015/01/31
+ */
+
+@Repository("tokenDBDAO")
+public class TokenDAOImpl extends AbstractHibernateDaoImpl<Token> implements ITokenDAO {
+
+    public TokenDAOImpl() {
+	super();
+	setClazz(Token.class);
+    }
+
+    @Override
+    public void insertToken(Token token) {
+	Preconditions.checkNotNull(token);
+	getCurrentSession().saveOrUpdate(token);
+	getCurrentSession().flush();
+    }
+    
+    @Override
+	public void updateToken(Token token) {
+		// TODO Auto-generated method stub
+	Preconditions.checkNotNull(token);
+	getCurrentSession().merge(token);
+	getCurrentSession().flush();
+	}
+    
+
+    @Override
+    public Token selectTokenByToken(String token) {
+	return (Token) getCurrentSession().get(Token.class, token);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public Token selectTokenByFetToken(String fetToken) {
+	List<Token> tokenList = getCurrentSession().createQuery("select t from Token t where t.fetToken = :fetToken order by t.expireDateTime desc").setParameter("fetToken", fetToken).list();
+	if (tokenList.isEmpty()) {
+	    return null;
+	} else {
+	    return tokenList.get(0);
+	}
+    }
+
+
+}

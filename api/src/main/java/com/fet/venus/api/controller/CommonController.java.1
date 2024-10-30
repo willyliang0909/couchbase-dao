@@ -1,0 +1,571 @@
+package com.fet.venus.api.controller;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Encoder;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.fet.venus.api.ErrorMessages;
+import com.fet.venus.api.PlanOptionDef;
+import com.fet.venus.api.security.SecurityUtil;
+import com.fet.venus.api.util.HttpRequestUtil;
+import com.fet.venus.api.util.HttpRequestUtilV2;
+import com.fet.venus.api.util.LogUtil;
+import com.fet.venus.db.dao.IAdSponsorDAO;
+import com.fet.venus.db.dao.IAreaDAO;
+import com.fet.venus.db.dao.ICategoryMenuDAO;
+import com.fet.venus.db.dao.IClientEventHistoryDAO;
+import com.fet.venus.db.dao.IConfigDAO;
+import com.fet.venus.db.dao.IMarketingBannerRevampDAO;
+import com.fet.venus.db.dao.IMarketingRankingContentDAO;
+import com.fet.venus.db.dao.IMarketingRankingRevampDAO;
+import com.fet.venus.db.dao.IMemberCancelReasonDAO;
+import com.fet.venus.db.dao.IMemberDAO;
+import com.fet.venus.db.dao.IMemberDeviceDAO;
+import com.fet.venus.db.dao.IMetadataDAO;
+import com.fet.venus.db.dao.IPlatformPublishDAO;
+import com.fet.venus.db.dao.ISoftwareReleaseDAO;
+import com.fet.venus.db.dao.IStbOrderInfoDAO;
+import com.fet.venus.db.dao.ITagDAO;
+import com.fet.venus.db.dao.ITokenDAO;
+import com.fet.venus.db.dao.ITvAuthorizationCodeRecordDAO;
+import com.fet.venus.db.dao.ITvAuthorizationQRCodeRecordDAO;
+import com.fet.venus.db.dao.IMemberDeleteTermsDAO;
+import com.fet.venus.db.models.AdSponsor;
+import com.fet.venus.db.models.Area;
+import com.fet.venus.db.models.CategoryMenu;
+import com.fet.venus.db.models.ClientEventHistory;
+import com.fet.venus.db.models.Config;
+import com.fet.venus.db.models.ErrorCodeMessage;
+import com.fet.venus.db.models.MarketingBannerRevamp;
+import com.fet.venus.db.models.MarketingRankingContent;
+import com.fet.venus.db.models.MarketingRankingRevamp;
+import com.fet.venus.db.models.Member;
+import com.fet.venus.db.models.MemberCancelReason;
+import com.fet.venus.db.models.MemberDevice;
+import com.fet.venus.db.models.PlatformPublish;
+import com.fet.venus.db.models.SoftwareRelease;
+import com.fet.venus.db.models.StbOrderInfo;
+import com.fet.venus.db.models.Token;
+import com.fet.venus.db.models.TvAuthorizationCodeRecord;
+import com.fet.venus.db.models.TvAuthorizationQRCodeRecord;
+import com.fet.venus.db.models.MemberDeleteTerms;
+import com.fet.venus.service.ExternalApplyService;
+import com.fet.venus.service.SDPService;
+import com.fet.venus.service.models.xml.sdp.SDPOutput;
+import com.fet.venus.service.util.CommonUtil;
+import com.fet.venus.service.util.ConfigUtil;
+import com.fet.venus.service.util.SecurityTokenCreate;
+import com.fet.venus.service.util.SecurityTokenUtil;
+import com.fet.venus.service.util.TokenAuthorizeService;
+import com.nimbusds.jwt.JWT;
+import com.nimbusds.jwt.JWTParser;
+import com.nimbusds.jwt.SignedJWT;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
+
+/**
+ * <p>
+ * Title: ApiController.java
+ * </p>
+ * <p>
+ * Description: 供前端呼叫的API
+ * </p>
+ * 
+ * @author : Ray Yang
+ * @create date : 2015/01/31
+ */
+
+@Controller
+public class CommonController extends BaseAPIController {
+
+	private static Logger kpiLogger = LoggerFactory.getLogger("KPI");
+	private static Logger debugLogger = LoggerFactory.getLogger("KPI");
+	private Long DEFAULT_EXPIRE_TIME = null;
+	private static String STREAMING_DOMAIN = null;
+	private static String IMAGE_DOMAIN = null;
+	private static final String AESKey = "bandott_collabo_";
+	private static final String AESIv = "_friday_video_iv";
+	private static final int MILLISECONDS_IN_HOUR = 3600000;
+	private static List<CategoryMenu> CATEGORY1 = new ArrayList<CategoryMenu>();
+	private static List<CategoryMenu> CATEGORY2 = new ArrayList<CategoryMenu>();
+	private static List<CategoryMenu> CATEGORYMenu1 = new ArrayList<CategoryMenu>();
+	private static List<CategoryMenu> CATEGORYMenu2 = new ArrayList<CategoryMenu>();
+	private static List<CategoryMenu> CATEGORYMenu3 = new ArrayList<CategoryMenu>();
+	private static List<CategoryMenu> CATEGORYMenu4 = new ArrayList<CategoryMenu>();
+	private static JSONArray kindList_movie = new JSONArray();
+	private static JSONArray kindList_drama = new JSONArray();
+	private static JSONArray kindList_anime = new JSONArray();
+	private static JSONArray kindList_show = new JSONArray();
+	private static JSONArray areaList_movie = new JSONArray();
+	private static JSONArray areaList_drama = new JSONArray();
+	private JSONArray yearList_movie = new JSONArray();
+	private JSONArray yearList_others = new JSONArray();
+	private static JSONArray metadataList_movie = new JSONArray();
+	private static JSONArray metadataList_drama = new JSONArray();
+	private static JSONArray metadataList_anime = new JSONArray();
+	private static JSONArray metadataList_show = new JSONArray();
+
+	@Autowired
+	private IConfigDAO configDAO;
+	@Autowired
+	private ICategoryMenuDAO categoryMenuDAO;
+	@Autowired
+	private IMemberDAO memberDAO;
+	@Autowired
+	private IMemberDeviceDAO memberDeviceDAO;
+	@Autowired
+	private ITokenDAO tokenDAO;
+	@Autowired
+	private IPlatformPublishDAO platformPublishDAO;
+	@Autowired
+	private IClientEventHistoryDAO clientEventHistoryDAO;
+	@Autowired
+	private ISoftwareReleaseDAO softwareReleaseDAO;
+	@Autowired
+	private IAdSponsorDAO adSponsorDAO;
+	@Autowired
+	PropertiesConfiguration config;
+	@Autowired
+	private ConfigUtil configUtil;
+	@Autowired
+	private TokenAuthorizeService tokenAuthorizeService;
+	// @Autowired
+	// private CSPService cspService;
+	@Autowired
+	private SDPService sdpService;
+	@Autowired
+	ITvAuthorizationCodeRecordDAO tvAuthCodeRecordDAO;
+	@Autowired
+	private ITagDAO tagDAO;
+	@Autowired
+	private IAreaDAO areaDAO;
+	@Autowired
+	private IMemberCancelReasonDAO memberCancelReasonDAO;
+	@Autowired
+	private IMetadataDAO metadataDAO;
+	@Autowired
+	private IMarketingRankingRevampDAO rankingDAO;
+	@Autowired
+	private IMarketingRankingContentDAO rankingContentDAO;
+	@Autowired
+	private IMarketingBannerRevampDAO bannerRevampBMDAO;
+	@Autowired
+	private IStbOrderInfoDAO stbOrderInfoDAO;
+	@Autowired
+	private ExternalApplyService exApplyService;
+	@Autowired
+	private CommonUtil commonUtil;
+	@Autowired
+	private ITvAuthorizationQRCodeRecordDAO tvAuthQRCodeRecordDAO;
+	@Autowired
+	private IMemberDeleteTermsDAO memberDeleteTermsDao;
+
+		@RequestMapping(value = "/token/getv2", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public String getTokenV2(HttpServletRequest request, HttpServletResponse response) {
+		Date startTime = new Date();
+		JSONObject result = new JSONObject();
+
+		String fetToken = StringEscapeUtils.escapeHtml(request.getHeader("FET-Token"));
+		fetToken = CommonUtil.antiTrustBoundaryViolation(fetToken);
+		String deviceToken = StringEscapeUtils.escapeHtml(request.getHeader("Device-Token"));
+		String udid = StringEscapeUtils.escapeHtml(request.getHeader("UDID"));
+		if (StringUtils.isBlank(udid)) {
+			kpiLogger.error("{}Ouput(message=[{}]未輸入 UDID)",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CODE_UDID_IS_EMPTY);
+			result.put("status", HttpServletResponse.SC_BAD_REQUEST);
+			result.put("code", CODE_UDID_IS_EMPTY);
+			result.put("message", "未輸入 UDID");
+			return result.toString();
+		}
+		String platform = StringEscapeUtils.escapeHtml(request.getHeader("Platform"));
+		platform = CommonUtil.antiTrustBoundaryViolation(platform);
+		if (StringUtils.isBlank(platform)) {
+			kpiLogger.error("{}Ouput(message=[{}]未輸入 Platform)",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CODE_PLATFORM_IS_EMPTY);
+			result.put("status", HttpServletResponse.SC_BAD_REQUEST);
+			result.put("code", CODE_PLATFORM_IS_EMPTY);
+			result.put("message", "未輸入 Platform");
+			return result.toString();
+		}
+		if (!platform.equals("PC Web") && !platform.equals("Mobile Web")
+				&& !platform.equals("IPhone") && !platform.equals("IPad") && !platform.equals("Apple_TV") 
+				&& !platform.equals("Android Phone") && !platform.equals("Android Tablet") && !platform.startsWith("TV_")
+				&& !platform.equals("HMD") && !platform.equals("Samsung_TV") && !platform.equals("LG_TV")) {
+			kpiLogger.error("{}Ouput(message=[{}]Platform 錯誤)",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CODE_PLATFORM_ERROR);
+			result.put("status", HttpServletResponse.SC_BAD_REQUEST);
+			result.put("code", CODE_PLATFORM_ERROR);
+			result.put("message", "Platform 錯誤");
+			return result.toString();
+		}
+		String model = StringEscapeUtils.escapeHtml(request.getHeader("Model"));
+		if (StringUtils.isBlank(model)) {
+			kpiLogger.error("{}Ouput(message=[{}]未輸入 Model)",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CODE_MODEL_IS_EMPTY);
+			result.put("status", HttpServletResponse.SC_BAD_REQUEST);
+			result.put("code", CODE_MODEL_IS_EMPTY);
+			result.put("message", "未輸入 Model");
+			return result.toString();
+		}
+		String version = StringEscapeUtils.escapeHtml(request.getHeader("Version"));
+		if (StringUtils.isBlank(version)) {
+			kpiLogger.error("{}Ouput(message=[{}]未輸入 Version)",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CODE_VERSION_IS_EMPTY);
+			result.put("status", HttpServletResponse.SC_BAD_REQUEST);
+			result.put("code", CODE_VERSION_IS_EMPTY);
+			result.put("message", "未輸入 Version");
+			return result.toString();
+		}
+		if (!version.matches("^\\d+(\\.\\d+)*$")) {
+			kpiLogger.error("{}Ouput(message=[{}]Version 不合規則)",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CODE_VERSION_FORMAT_ERROR);
+			result.put("status", HttpServletResponse.SC_BAD_REQUEST);
+			result.put("code", CODE_VERSION_FORMAT_ERROR);
+			result.put("message", "Version 不合規則");
+			return result.toString();
+		}
+		String userAgent = StringEscapeUtils.escapeHtml(request.getHeader("User-Agent"));
+		if (StringUtils.isBlank(userAgent)) {
+			kpiLogger.error("{}Ouput(message=[{}]未輸入 User-Agent)",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CODE_USER_AGENT_IS_EMPTY);
+			result.put("status", HttpServletResponse.SC_BAD_REQUEST);
+			result.put("code", CODE_USER_AGENT_IS_EMPTY);
+			result.put("message", "未輸入 User-Agent");
+			return result.toString();
+		}
+		String loginType = StringEscapeUtils.escapeHtml(request.getHeader("loginType"));
+		if (StringUtils.isBlank(loginType)) loginType = "0";
+		if (!StringUtils.equals(loginType, "0") && !StringUtils.equals(loginType, "1")) {
+			kpiLogger.error("{}Ouput(message=[{}]loginType參數需為0或1)",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CODE_PARAMETER_ERROR);
+			result.put("status", HttpServletResponse.SC_BAD_REQUEST);
+			result.put("code", CODE_PARAMETER_ERROR);
+			result.put("message", "loginType參數需為0或1");
+			return result.toString();
+		}
+
+		try {
+			JSONObject data = new JSONObject();
+
+			long expireTime;
+			if (DEFAULT_EXPIRE_TIME == null) {
+				expireTime = config.getLong("default.expire.time");
+			} else {
+				expireTime = DEFAULT_EXPIRE_TIME;
+			}
+
+			// 準備發 Token
+			Token token = new Token();
+			token.setToken(RandomStringUtils.randomAlphanumeric(32));
+			token.setFetToken(fetToken);
+			token.setUdid(udid);
+			token.setPlatform(platform);
+			token.setModel(model);
+			token.setVersion(version);
+			token.setUserAgent(userAgent);
+			token.setEffectiveDateTime(new Date());
+			token.setExpireDateTime(new Date(token.getEffectiveDateTime().getTime() + expireTime));
+			
+			token.setLoginType(Byte.parseByte(loginType));
+
+			Member member = null;
+			String sdpTokens = null;
+			String sdpRefreshToken = null;
+			String idToken = null;
+			if (fetToken != null) {
+				HashMap<String, String> memberData = null;
+				if ("PC Web".equals(platform) || "Mobile Web".equals(platform) || "IPhone".equals(platform) || "IPad".equals(platform) 
+						|| "Android Phone".equals(platform)|| "Android Tablet".equals(platform)
+						|| "HMD".equals(platform)) {
+					// 不使用v1 getMemberData
+					// memberData = this.getMemberData(result, request, response, startTime, fetToken, platform);
+					
+					String memberFetId = null; // (extracted from SDP profile me)
+					if ("1".equals(loginType)) {
+						// 1. prepare friday domain client id
+						String fridayDomainClientId = configDAO.selectValueByType("login_fri_domain", "client_id");
+						
+						// 1.3 開始建立 Member帳號
+						memberFetId = "12345";
+						
+						// #### check point: check if fet_id is valid ####
+						if (memberFetId == null) {
+							// if not, return collected error info
+							return result.toString();
+						}
+					} else if ("0".equals(loginType)) {
+						sdpTokens = "ABCDEFG";
+						sdpRefreshToken = "ABCD123456";
+						if (null != sdpTokens) {
+							token.setFetToken(sdpTokens);
+							token.setSdpRefreshToken(sdpRefreshToken);
+						} else {
+							return result.toString();
+						}
+					}
+					
+					// 使用v2 getMemberData
+					memberData = this.getMemberDataV2(result, request, response, startTime, memberFetId/*fetToken*/);
+					if (memberData == null) {
+						return result.toString();
+					}
+					kpiLogger.info("{} Member_Data_birthday= {}",
+							CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)),
+							memberData.get("birthday"));
+					kpiLogger.info("{} Member_Data_fetidtype= {}",
+							CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)),
+							memberData.get("fetid_type"));
+					
+					memberData.put("udid", udid);
+					memberData.put("platform", platform);
+					memberData.put("model", model);
+					memberData.put("deviceToken", deviceToken);
+				}
+				// 不使用v1 setMemberDevice
+				// member = this.setMemberDevice(result, request, response, startTime, memberData, token, expireTime);
+				// 使用v2 setMemberDevice
+				member = this.setMemberDeviceV2(result, request, response, startTime, memberData, token, expireTime); //會員資料這個不重要
+				
+				if (member == null) {
+					return result.toString();
+				}
+			}
+
+			if (fetToken == null) {
+				token.setScope("default");
+			} else {
+				token.setScope("member");
+				if("1".equals(loginType)) {
+					// 同accessToken
+					//data.put("fetToken", token.getToken());
+					data.put("fetToken", token.getFetToken());
+				} else {
+					// SDP refresh token
+					data.put("fetToken", token.getSdpRefreshToken());
+				}
+				data.put("UID", member.getFetId());
+			}
+			if (member != null) {
+				token.setMemberId(member.getId());
+			}
+			tokenDAO.insertToken(token);
+
+			data.put("accessToken", token.getToken());
+			data.put("scope", token.getScope());
+			data.put("expiresIn", expireTime);
+			
+			// if(platform.equals("PC Web") || platform.equals("Mobile Web")) {
+				if("0".equals(loginType)) {
+					if(idToken == null) {
+						idToken = "";
+					}
+					data.put("idToken", idToken); // // SDP refresh idToken
+				}
+			// }
+			data.put("LoginType", Integer.parseInt(loginType));
+
+			kpiLogger.info("{}Ouput(message=[{}]成功取得Token&data={})",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CommonUtil.antiLogForging(data.toString()));
+			result.put("status", HttpServletResponse.SC_OK);
+			result.put("code", CODE_SUCCESS);
+			result.put("message", "成功");
+			result.put("data", data);
+			String  s = StringEscapeUtils.escapeHtml(result.toString());
+		    s = StringEscapeUtils.unescapeHtml(s);
+			
+			return s;
+		} catch (Exception e) {
+			e.printStackTrace();
+			debugLogger.error("{}Ouput(message=server error&exception={})",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), e);
+			debugLogger.error("{}", e);
+			kpiLogger.error("{}Ouput(message=[{}]服務忙碌中)",
+					CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CODE_SERVER_ERROR);
+			result.put("status", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			result.put("code", CODE_SERVER_ERROR);
+			result.put("message", ErrorMessages.CODE_SERVER_ERROR.getMessage());
+			
+			String  s = StringEscapeUtils.escapeHtml(result.toString());
+		    s = StringEscapeUtils.unescapeHtml(s);
+			
+			return s;
+		}
+	}
+	
+	
+	private HashMap<String, String> getMemberDataV2(JSONObject result,
+													HttpServletRequest request,
+													HttpServletResponse response,
+													Date startTime,
+													String fetId) {
+		Pattern pattern = Pattern.compile("[0-9_\\-\\.]+");
+		Matcher checkFetId = pattern.matcher(fetId);
+		if (!checkFetId.matches()) {
+			kpiLogger.error("{}Ouput(message=[{}]Fet Id錯誤)", CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)), CODE_FET_TOKEN_ERROR);
+			result.put("status", HttpServletResponse.SC_BAD_REQUEST);
+			result.put("code", CODE_FET_TOKEN_ERROR);
+			result.put("message", "Fet Id錯誤");
+			return null;
+			
+		}
+		
+		// parse json formatted profile
+		HashMap<String, String> memberData = new HashMap<String, String>();
+		memberData.put("sdpFetId", fetId); // added: 2020-04-10. for migration to 靠近.
+		try {
+			
+			// retrieve member data
+			memberData.put("fetid_type", "123");
+			memberData.put("msisdn", "123");
+			memberData.put("telMobile", "123");
+			memberData.put("email", "123");
+			memberData.put("mainEmail", "123");
+			memberData.put("fetnetId",  "123");
+			memberData.put("paidType", "123");
+			memberData.put("subType", "123");
+			memberData.put("gener", "123");
+			memberData.put("old", "123");
+			memberData.put("city", "123");
+			memberData.put("education", "123");
+			memberData.put("occupation", "123");
+			memberData.put("income", "123");
+		} catch (JSONException je) {
+			result.put("status", HttpServletResponse.SC_BAD_REQUEST);
+			result.put("code", CODE_FET_TOKEN_ERROR);
+			result.put("message", "invalid profile");
+			return null;
+			
+		}
+		
+		// return member data encapsulated with hashMap 
+		return memberData;
+		
+	}
+	
+	
+	private Member setMemberDeviceV2(JSONObject result,
+									 HttpServletRequest request,
+									 HttpServletResponse response,
+									 Date startTime,
+									 Map<String, String> map,
+									 Token token,
+									 long expireTime) {
+		if (map.get("deviceToken") == null) {
+			// #### print warning only when invoking method is not login VR
+			if (map.containsKey("invokeMethod") &&
+				map.get("invokeMethod").equals("loginV2") == false) {
+				debugLogger.warn("{}Ouput(message=未輸入 Device-Token)",
+						CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)));
+				
+			}
+			map.put("deviceToken", "");
+		}
+
+		// 建立member
+		String account = map.get("sdpFetId");
+		
+		// avoid creating empty account over and over again
+		if (account == null || account.isEmpty()) {
+			debugLogger.warn("{}Ouput(message=empty sdpFetId(key) detected!!!)", CommonUtil.antiLogForging(LogUtil.extract(request, response, startTime)));
+			return null;
+			
+		}
+		
+		// ## either create an whole new member, or update user info
+		Member member = null;
+		
+
+		// fieldsMap -> search parameter
+		HashMap<String, String> fieldsMap = new HashMap<String, String>();
+
+		
+		// case: create new when no data found given fetnetId(FET_ID)
+		if (member == null) {
+			member = new Member();
+			member.setLevelId(1);
+			member.setMaxLevelId(1);
+			member.setFetId(account);
+			member.setFetidType(map.get("fetid_type"));
+			member.setMsisdn("0912123123"); // updated: 2020-05-26
+			member.setType(Member.TYPE_FREE);
+			member.setSubType(map.containsKey("subType") ? Byte.parseByte(map.get("subType")) : new Byte("0"));
+			member.setPaidType(map.containsKey("paidType") ? Byte.parseByte(map.get("paidType")) : new Byte("0"));
+			member.setErrorCount(0);
+			member.setLoginDateTime(new Date());
+			member.setRegisterDateTime(new Date());
+			member.setIsApnLive(true);
+			member.setIsApnMovie(true);
+			member.setCreateDateTime(member.getLoginDateTime());
+			member = memberDAO.create(member);
+			
+		}
+		// case: update to the existing member
+		else {
+
+			member.setFetidType(map.get("fetid_type"));
+			member.setMsisdn("0912123123"); // updated: 2020-05-27
+			member.setSubType(map.containsKey("subType") ? Byte.parseByte(map.get("subType")) : new Byte("0"));
+			member.setPaidType(map.containsKey("paidType") ? Byte.parseByte(map.get("paidType")) : new Byte("0"));
+			member.setLoginDateTime(new Date());				
+			memberDAO.update(member);
+		}
+		
+		// default return member
+		return member;
+		
+	}
+
+}
