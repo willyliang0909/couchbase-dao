@@ -33,7 +33,6 @@
     <modules>
         <module>api</module>
         <module>db</module>
-        <module>core</module>
     </modules>
 
     <build>

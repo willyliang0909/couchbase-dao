@@ -21,7 +21,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.vod</groupId>
-			<artifactId>core</artifactId>
+			<artifactId>db</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 
