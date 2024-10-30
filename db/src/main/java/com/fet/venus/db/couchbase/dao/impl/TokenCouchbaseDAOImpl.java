@@ -5,11 +5,13 @@ import com.fet.venus.db.dao.ITokenDAO;
 import com.fet.venus.db.dao.impl.TokenDAOJPAImpl;
 import com.fet.venus.db.models.Token;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-//@Primary
-//@Repository("tokenCBDAO")
+@Primary
+@Repository("tokenCBDAO")
 public class TokenCouchbaseDAOImpl implements ITokenDAO {
 
     @Autowired

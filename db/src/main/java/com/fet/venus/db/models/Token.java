@@ -14,6 +14,7 @@ public class Token implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @org.springframework.data.annotation.Id
     private String token;
     private String scope;
     private Integer memberId;
