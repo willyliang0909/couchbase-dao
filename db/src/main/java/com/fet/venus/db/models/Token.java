@@ -1,11 +1,19 @@
 package com.fet.venus.db.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@Entity
+@Table(name = "venus_token")
 public class Token implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    @Id
     private String token;
     private String scope;
     private Integer memberId;
@@ -19,6 +27,7 @@ public class Token implements Serializable {
     private String serialNumber;
     private Date effectiveDateTime;
     private Date expireDateTime;
+    @Column(name = "refresh_token")
     private String sdpRefreshToken; // added: 2020-04-01. Migration to 靠近.
     private Byte loginType;         // added: 2020-04-07. Migration to 靠近.
 
