@@ -1,19 +1,24 @@
-package com.fet.venus.db.dao.impl;
+package com.fet.venus.db.couchbase.dao.impl;
 
+import com.fet.venus.db.couchbase.repository.TokenCouchbaseRepository;
 import com.fet.venus.db.dao.ITokenDAO;
+import com.fet.venus.db.dao.impl.TokenDAOJPAImpl;
 import com.fet.venus.db.models.Token;
-import com.fet.venus.db.repository.TokenRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("tokenDBDAO")
-public class TokenDAOJPAImpl implements ITokenDAO {
+@Primary
+@Repository("tokenCBDAO")
+public class TokenCouchbaseDAOImpl implements ITokenDAO {
 
     @Autowired
-    private TokenRepository repository;
+    private TokenCouchbaseRepository repository;
+
+    @Autowired
+    private TokenDAOJPAImpl tokenDAOJPA;
 
     @Override
     public void insertToken(Token token) {
@@ -32,7 +37,10 @@ public class TokenDAOJPAImpl implements ITokenDAO {
 
     @Override
     public Token selectTokenByFetToken(String fetToken) {
-        return repository.selectTokenByFetToken(fetToken).stream().findFirst().orElse(null);
+        return repository
+                .findAllByFetTokenOrderByExpireDateTimeDesc(fetToken).stream()
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
