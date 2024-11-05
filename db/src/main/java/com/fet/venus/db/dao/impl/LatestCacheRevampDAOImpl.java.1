@@ -1,0 +1,43 @@
+package com.fet.venus.db.dao.impl;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.springframework.stereotype.Repository;
+import com.fet.venus.db.dao.ILatestCacheRevampDAO;
+import com.fet.venus.db.models.LatestCacheRevamp;
+
+/**
+ * <p>
+ * Title: LatestCacheRevampDAOImpl.java
+ * </p>
+ * <p>
+ * Description: 讓Backend存入最新上架的band/more資料
+ * </p>
+ * <p>
+ * Copyright: Copyright (c) 2007
+ * </p>
+ * <p>
+ * Company:
+ * </p>
+ *
+ * @author : Alvin
+ * @create date : 2018/04/23
+ */
+
+@Repository("latestCacheRevampDAO")
+public class LatestCacheRevampDAOImpl extends AbstractHibernateDaoImpl<LatestCacheRevamp> implements ILatestCacheRevampDAO {
+
+    public LatestCacheRevampDAOImpl() {
+        super();
+        setClazz(LatestCacheRevamp.class);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<LatestCacheRevamp> selectLatestList(byte bufferType) {
+        StringBuilder hql = new StringBuilder("select r from LatestCacheRevamp r where bufferType = :bufferType order by orderId asc ");
+        Query query = getCurrentSession().createQuery(hql.toString()).setParameter("bufferType", bufferType);
+        return query.list();
+    }
+}
