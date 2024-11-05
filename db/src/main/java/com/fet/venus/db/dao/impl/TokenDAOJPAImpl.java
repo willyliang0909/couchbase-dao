@@ -4,16 +4,13 @@ import com.fet.venus.db.dao.ITokenDAO;
 import com.fet.venus.db.models.Token;
 import com.fet.venus.db.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository("tokenDBDAO")
-public class TokenDAOJPAImpl implements ITokenDAO {
+@RequiredArgsConstructor
+public class TokenDAOJPAImpl extends AbstractHibernateDaoImpl<Token> implements ITokenDAO {
 
-    @Autowired
-    private TokenRepository repository;
+    private final TokenRepository repository;
 
     @Override
     public void insertToken(Token token) {
@@ -33,35 +30,5 @@ public class TokenDAOJPAImpl implements ITokenDAO {
     @Override
     public Token selectTokenByFetToken(String fetToken) {
         return repository.selectTokenByFetToken(fetToken).stream().findFirst().orElse(null);
-    }
-
-    @Override
-    public Token findOne(long id) {
-        return null;
-    }
-
-    @Override
-    public Token findOne(String id) {
-        return null;
-    }
-
-    @Override
-    public List<Token> findAll() {
-        return List.of();
-    }
-
-    @Override
-    public Token create(Token entity) {
-        return null;
-    }
-
-    @Override
-    public Token update(Token entity) {
-        return null;
-    }
-
-    @Override
-    public void delete(Token entity) {
-
     }
 }

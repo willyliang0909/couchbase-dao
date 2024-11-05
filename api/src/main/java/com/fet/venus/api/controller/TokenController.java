@@ -1,5 +1,6 @@
 package com.fet.venus.api.controller;
 
+import com.fet.venus.db.couchbase.dao.impl.TokenCouchbaseDAOImpl;
 import com.fet.venus.db.dao.ITokenDAO;
 import com.fet.venus.db.models.Token;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,14 @@ public class TokenController {
 
     private final ITokenDAO tokenDAO;
 
+    private final TokenCouchbaseDAOImpl couchbaseDAO;
+
     private final CouchbaseTemplate couchbaseTemplate;
+
+    @PostMapping("/couchbase")
+    public void insertCouchbase(@RequestBody Token token) {
+        couchbaseDAO.insertToken(token);
+    }
 
     @PostMapping("/template")
     public Token insertBy(@RequestBody Token token) {
