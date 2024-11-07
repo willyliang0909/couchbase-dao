@@ -10,6 +10,6 @@ public interface TokenRepository extends JpaRepository<Token, String> {
 
     @Query(value = "from Token t" +
             " where t.fetToken = :fetToken" +
-            " order by t.expireDateTime desc")
+            " order by t.expireDateTime desc limit 1")
     List<Token> selectTokenByFetToken(String fetToken);
 }

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
-@Primary
+
 @RequiredArgsConstructor
 @Repository("tokenDBDAO")
 public class TokenDAOJPAImpl extends AbstractHibernateDaoImpl<Token> implements ITokenDAO {

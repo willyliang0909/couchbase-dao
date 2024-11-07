@@ -21,24 +21,16 @@ public class TestUserService {
 
     @Cacheable(value = CacheKey.USER_CACHE, key = "'test'", condition = "#root.target.isQueryCache()")
     public TestUser getUser() {
-
         log.info("get new TestUser");
-        TestUser testUser = new TestUser();
-        testUser.setName("willy");
-        testUser.setAge(10L);
-
-        TestUser.Address address = new TestUser.Address();
-        testUser.setAddress(address);
-//        return TestUser.builder()
-//                .name("willy")
-//                .age(10L)
-//                .address(TestUser.Address.builder()
-//                        .country("tw")
-//                        .city("kh")
-//                        .street("street 123")
-//                        .build()
-//                ).build();
-        return testUser;
+        return TestUser.builder()
+                .name("willy")
+                .age(10L)
+                .address(TestUser.Address.builder()
+                        .country("tw")
+                        .city("kh")
+                        .street("street 123")
+                        .build()
+                ).build();
     }
 
     public boolean isQueryCache() {
