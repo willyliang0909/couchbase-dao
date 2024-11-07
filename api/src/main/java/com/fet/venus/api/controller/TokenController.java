@@ -4,7 +4,6 @@ import com.fet.venus.db.couchbase.dao.impl.TokenCouchbaseDAOImpl;
 import com.fet.venus.db.dao.ITokenDAO;
 import com.fet.venus.db.models.Token;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.couchbase.core.CouchbaseTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +32,8 @@ public class TokenController {
 
     @PostMapping("/template")
     public Token insertBy(@RequestBody Token token) {
-        return couchbaseTemplate.insertById(Token.class).one(token);
+        return couchbaseTemplate.save(token);
+        //return couchbaseTemplate.insertById(Token.class).one(token);
     }
 
     @PostMapping
@@ -42,14 +42,9 @@ public class TokenController {
         return token;
     }
 
-    @Cacheable(value = "myCache", key = "123")
-    @GetMapping("/willy")
-    public Token token() {
-        return new Token();
-    }
 
-    @Cacheable(value = "token", key = "#token")
     @GetMapping("/{token}")
+    @Cacheable(value = "token")
     public Token selectTokenByToken(@PathVariable String token) {
         return tokenDAO.selectTokenByToken(token);
     }

@@ -1,0 +1,311 @@
+package com.fet.venus.terracotta.generate.dao.impl;
+import java.util.Date;
+
+import org.hibernate.HibernateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
+import com.fet.venus.db.dao.impl.TokenDAOImpl;
+import com.fet.venus.db.models.Token;
+import com.fet.venus.terracotta.generate.util.CacheUtil;
+import com.fet.venus.terracotta.generate.util.TerracottaCacheException;
+import com.fet.venus.terracotta.generate.util.TerracottaUtil;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.constructs.nonstop.NonStopCacheException;
+import net.sf.ehcache.search.Attribute;
+import net.sf.ehcache.search.Direction;
+import net.sf.ehcache.search.Query;
+import net.sf.ehcache.search.Result;
+import net.sf.ehcache.search.Results;
+import net.sf.ehcache.search.expression.Criteria;
+
+@Repository("tokenBMDAO")
+public class TokenBigmemoryDAOImpl extends TokenDAOImpl {
+
+	private static Logger logger = LoggerFactory.getLogger("fridayDB");
+	private Cache tokenCache;
+	private TerracottaUtil terracottaUtil = new TerracottaUtil();
+	private CacheUtil cacheUtil = new CacheUtil();
+	private String cacheFlag = CacheUtil.tokenCacheFlag;
+	private static Attribute<String> fetTokenAttr;
+	private static Attribute<Integer> memberIdAttr;
+	private static Attribute<String> udidAttr;
+	private static Attribute<Date> expireDateTimeAttr;
+
+	public TokenBigmemoryDAOImpl(){
+
+	}
+
+	public void setSearchAttribute() throws TerracottaCacheException{
+		tokenCache = terracottaUtil.getCache(CacheUtil.TOKEN_CACHE);
+    	fetTokenAttr = tokenCache.getSearchAttribute("fetToken");
+    	memberIdAttr = tokenCache.getSearchAttribute("memberId");
+    	udidAttr = tokenCache.getSearchAttribute("udid");
+    	expireDateTimeAttr = tokenCache.getSearchAttribute("expireDateTime");
+	}
+
+
+	public void updateToken(Token token){
+
+		try {
+			if(cacheUtil.isUpdateCache(cacheFlag)){
+				if (token != null) {	//passed-in token isn't null
+
+					long queryStart = System.currentTimeMillis();
+					String tokenKey = token.getToken();
+					//search attribute date type column have to convert
+					token.setExpireDateTime(CacheUtil.convertDateTimeColumn(token.getExpireDateTime()));
+
+					logger.debug("enableCacheFlag = true and bypassCache = false, update data to cache");
+
+					terracottaUtil.putToCache(CacheUtil.TOKEN_CACHE, tokenKey, token);
+					long queryEnd = System.currentTimeMillis();
+
+					logger.info(TerracottaUtil.UPDATE_CACHE_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+				}
+			}else{
+				logger.info("enableCacheFlag = false or bypassCache = true, update data to db.");
+				long queryStart = System.currentTimeMillis();
+				super.updateToken(token);
+				long queryEnd = System.currentTimeMillis();
+
+				logger.info(TerracottaUtil.UPDATE_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+
+			}
+		} catch (TerracottaCacheException | NonStopCacheException e) {//if exception occurs, inserts into database directly
+			e.printStackTrace();
+			logger.error(TerracottaUtil.PUT_DATA_ERROR+ ":" + e.toString());
+
+			CacheUtil.setAllBypassCache(true);
+
+			long queryStart = System.currentTimeMillis();
+			super.updateToken(token);
+			long queryEnd = System.currentTimeMillis();
+
+			logger.info(TerracottaUtil.UPDATE_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+		}
+	}
+
+	public void insertToken(Token token){
+
+		try {
+			if(cacheUtil.isUpdateCache(cacheFlag)){
+
+				if (token != null) {	//passed-in token isn't null
+					long queryStart = System.currentTimeMillis();
+					String tokenKey = token.getToken();
+					//search attribute date type column have to convert
+					token.setExpireDateTime(CacheUtil.convertDateTimeColumn(token.getExpireDateTime()));
+					logger.debug("enableCacheFlag = true and bypassCache = false, put data to cache");
+					terracottaUtil.putToCache(CacheUtil.TOKEN_CACHE, tokenKey, token);
+					long queryEnd = System.currentTimeMillis();
+					logger.info(TerracottaUtil.UPDATE_CACHE_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+				}
+			}else{
+				logger.info("enableCacheFlag = false or bypassCache = true, insert data to db.");
+				long queryStart = System.currentTimeMillis();
+				super.insertToken(token);
+				long queryEnd = System.currentTimeMillis();
+
+				logger.info(TerracottaUtil.UPDATE_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+
+			}
+		} catch (TerracottaCacheException | NonStopCacheException e) {//if exception occurs, inserts into database directly
+			e.printStackTrace();
+			logger.error(TerracottaUtil.PUT_DATA_ERROR+ ":" + e.toString());
+
+			CacheUtil.setAllBypassCache(true);
+
+			long queryStart = System.currentTimeMillis();
+			super.insertToken(token);
+			long queryEnd = System.currentTimeMillis();
+
+			logger.info(TerracottaUtil.UPDATE_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+		}
+	}
+
+	public Token selectTokenByToken(String token) {
+
+		Token resToken = null;
+
+		try{
+
+			if(cacheUtil.isQueryCache(cacheFlag)){
+				logger.info("enableCacheFlag = true and bypassCache = false, get data from cache");
+
+				long queryStart = System.currentTimeMillis();
+				resToken = (Token) terracottaUtil.getFromCache(CacheUtil.TOKEN_CACHE, token);
+				//long searchCacheEnd = System.currentTimeMillis();
+				//logger.info("search from cache success, duration:["+(searchCacheEnd - queryStart)+" ms]");
+
+				if(null == resToken){
+
+					logger.info("token["+token+"] is not in cache, search from db");
+					long queryDBStart = System.currentTimeMillis();
+					resToken = super.selectTokenByToken(token);
+					long queryDBEnd = System.currentTimeMillis();
+					if(null != resToken) {
+						logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryDBEnd - queryDBStart)+" ms]");
+						logger.error(TerracottaUtil.DATA_INCONSISTENT_ERROR);
+
+						resToken.setExpireDateTime(CacheUtil.convertDateTimeColumn(resToken.getExpireDateTime()));
+						terracottaUtil.putToCache(CacheUtil.TOKEN_CACHE, resToken.getToken(), resToken);
+					}
+				}
+
+				long queryEnd = System.currentTimeMillis();
+				logger.info(TerracottaUtil.QUERY_CACHE_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+
+			}else{
+
+				logger.info("enableCacheFlag = false or bypassCache = true, get data from db");
+				long queryStart = System.currentTimeMillis();
+				resToken = super.selectTokenByToken(token);
+				long queryEnd = System.currentTimeMillis();
+				logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+			}
+		}catch (TerracottaCacheException | NonStopCacheException te) {	//exception occurs then retrieve from database
+			te.printStackTrace();
+
+			if (te.toString().contains("get timed out")) {
+				logger.error(TerracottaUtil.GET_DATA_ERROR+ ": input[token = "+token+"]" + te.toString());
+				logger.info("try to get cache flag value to double check");
+				try {
+					cacheUtil.getCacheFlagValue(cacheFlag);
+
+				} catch (TerracottaCacheException e) {
+					logger.error(e.toString());
+					CacheUtil.setAllBypassCache(true);
+					e.printStackTrace();
+				}
+			} else {
+				logger.error("input[token = " + token+"]" + ":" + te.toString());
+				CacheUtil.setAllBypassCache(true);
+			}
+
+			long queryStart = System.currentTimeMillis();
+			resToken = super.selectTokenByToken(token);
+			long queryEnd = System.currentTimeMillis();
+
+			logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+
+		}catch (HibernateException he) {	//exception occurs then retrieve from database
+
+			throw new HibernateException(he);
+
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("there are some exceptions to do dao query :" + e.toString());
+
+			long queryStart = System.currentTimeMillis();
+			resToken = super.selectTokenByToken(token);
+			long queryEnd = System.currentTimeMillis();
+
+			logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+		}
+
+		return resToken;
+	}
+
+	public Token selectTokenByFetToken(String fetToken) {
+
+		Token resToken = null;
+
+		try{
+
+			if(cacheUtil.isQueryCache(cacheFlag)){
+
+				logger.info("enableCacheFlag = true and bypassCache = false, get data from cache");
+				setSearchAttribute();
+
+				//List result = new ArrayList();
+				Results results = null;
+				Result qresult = null;
+				long queryStart = System.currentTimeMillis();
+
+				Query query = tokenCache.createQuery().includeKeys();
+				Criteria criteria = fetTokenAttr.eq(fetToken);
+
+				query.addCriteria(criteria).addOrderBy(expireDateTimeAttr,
+						Direction.DESCENDING).maxResults(1);
+				results = query.execute();
+				//long searchCacheEnd = System.currentTimeMillis();
+				//logger.info("search from cache success, duration:["+(searchCacheEnd - queryStart)+" ms]");
+
+				if(results.size() > 0){
+					qresult = results.all().get(0);
+					resToken = (Token) tokenCache.get(qresult.getKey()).getObjectValue();
+				}else{
+
+					logger.info("cache query result is empty, search from db");
+
+					long queryDBStart = System.currentTimeMillis();
+					resToken = super.selectTokenByFetToken(fetToken);
+					long queryDBEnd = System.currentTimeMillis();
+
+					if(null != resToken) {
+						logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryDBEnd - queryDBStart)+" ms]");
+						logger.error(TerracottaUtil.DATA_INCONSISTENT_ERROR);
+
+						resToken.setExpireDateTime(CacheUtil.convertDateTimeColumn(resToken.getExpireDateTime()));
+						terracottaUtil.putToCache(CacheUtil.TOKEN_CACHE, resToken.getToken(), resToken);
+					}
+
+				}
+
+				long queryEnd = System.currentTimeMillis();
+				logger.info(TerracottaUtil.QUERY_CACHE_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+
+			}else{
+
+				logger.info("enableCacheFlag = false or bypassCache = true, get data from db");
+				long queryStart = System.currentTimeMillis();
+				resToken = super.selectTokenByFetToken(fetToken);
+				long queryEnd = System.currentTimeMillis();
+				logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+			}
+
+		}catch (TerracottaCacheException | NonStopCacheException te) {	//exception occurs then retrieve from database
+			te.printStackTrace();
+
+			if(te.toString().contains("executeQuery timed out") || te.toString().contains("get timed out")){
+				logger.error(TerracottaUtil.SEARCH_DATA_ERROR+": input[fetToken = "+fetToken+"]" + te.toString());
+				logger.error("try to get cache flag value to double check");
+				try {
+					cacheUtil.getCacheFlagValue(cacheFlag);
+
+				} catch (TerracottaCacheException e) {
+					logger.error(e.toString());
+					CacheUtil.setAllBypassCache(true);
+					e.printStackTrace();
+				}
+			}else{
+				logger.error("input[fetToken = "+fetToken+"]" + te.toString());
+				CacheUtil.setAllBypassCache(true);
+			}
+
+			long queryStart = System.currentTimeMillis();
+			resToken = super.selectTokenByFetToken(fetToken);
+			long queryEnd = System.currentTimeMillis();
+
+			logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+
+		}catch (HibernateException he) {
+			throw new HibernateException(he);
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error("there are some exceptions to do dao query :" + e.toString());
+
+			long queryStart = System.currentTimeMillis();
+			resToken = super.selectTokenByFetToken(fetToken);
+			long queryEnd = System.currentTimeMillis();
+			logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+		}
+
+
+
+		return resToken;
+	}
+}

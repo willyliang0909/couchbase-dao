@@ -1,0 +1,130 @@
+package com.fet.venus.terracotta.generate.dao.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.constructs.nonstop.NonStopCacheException;
+import net.sf.ehcache.search.Attribute;
+import net.sf.ehcache.search.Direction;
+import net.sf.ehcache.search.Query;
+import net.sf.ehcache.search.Result;
+import net.sf.ehcache.search.Results;
+
+import org.hibernate.HibernateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
+
+import com.fet.venus.db.dao.ILatestCacheRevampDAO;
+import com.fet.venus.db.dao.impl.LatestCacheRevampDAOImpl;
+import com.fet.venus.db.models.LatestCacheRevamp;
+import com.fet.venus.terracotta.generate.util.CacheUtil;
+import com.fet.venus.terracotta.generate.util.TerracottaCacheException;
+import com.fet.venus.terracotta.generate.util.TerracottaUtil;
+
+
+@Repository("latestCacheRevampBMDAO")
+public class LatestCacheRevampBigmemoryDAOImpl extends LatestCacheRevampDAOImpl implements ILatestCacheRevampDAO {
+
+	private static Logger logger = LoggerFactory.getLogger("fridayDB");
+	private Cache latestCache;
+	private TerracottaUtil terracottaUtil = new TerracottaUtil();
+	private CacheUtil cacheUtil = new CacheUtil();
+	private String cacheFlag = CacheUtil.latestCacheFlag;
+
+	private static Attribute<Byte> bufferTypeAttr;
+	private static Attribute<Integer> orderIdAttr;
+
+	public LatestCacheRevampBigmemoryDAOImpl(){
+
+	}
+
+	public void setSearchAttribute() throws TerracottaCacheException{
+		latestCache = terracottaUtil.getCache(CacheUtil.LATEST_CACHE);
+		bufferTypeAttr = latestCache.getSearchAttribute("bufferType");
+		orderIdAttr = latestCache.getSearchAttribute("orderId");
+	}
+
+	@Override
+	public List<LatestCacheRevamp> selectLatestList(byte bufferType) {
+		List<LatestCacheRevamp> result = null;
+		try {
+			if(cacheUtil.isQueryCache(cacheFlag)){
+				logger.info("enableCacheFlag = true and bypassCache = false, get data from cache");
+
+				setSearchAttribute();
+				Results results = null;
+				Element ele;
+				String key;
+
+				Query query = latestCache.createQuery().includeKeys();
+				query.addCriteria(bufferTypeAttr.eq(bufferType));
+				query.addOrderBy(orderIdAttr, Direction.ASCENDING);
+				long queryStart = System.currentTimeMillis();
+				results = query.execute();
+				long queryEnd = System.currentTimeMillis();
+				logger.info(TerracottaUtil.QUERY_CACHE_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+
+				result = new ArrayList<LatestCacheRevamp>();
+
+				if (results.size() > 0) {
+					for(Result qresult : results.all()){
+						key = String.valueOf(qresult.getKey());
+						ele = latestCache.get(key);
+						if(null != ele){
+							LatestCacheRevamp latestCacheRevamp = (LatestCacheRevamp) ele.getObjectValue();
+							result.add(latestCacheRevamp);
+						}
+					}
+				}
+			} else {	//if cache is not enabled then get token from the database
+				logger.info("enableCacheFlag = false or bypassCache = true, get data from db");
+				long queryStart = System.currentTimeMillis();
+				result = super.selectLatestList(bufferType);
+				long queryEnd = System.currentTimeMillis();
+				logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+			}
+		} catch (TerracottaCacheException | NonStopCacheException te) {	//exception occurs then retrieve from database
+
+			te.printStackTrace();
+
+			if(te.toString().contains("executeQuery timed out") || te.toString().contains("get timed out")){
+				logger.error(TerracottaUtil.SEARCH_DATA_ERROR + ": " + te.toString());
+				logger.info("try to get cache flag value to double check");
+				try {
+					cacheUtil.getCacheFlagValue(cacheFlag);
+
+				} catch (TerracottaCacheException e) {
+					logger.error(e.toString());
+					CacheUtil.setAllBypassCache(true);
+					e.printStackTrace();
+				}
+			}else{
+				logger.error(te.toString());
+				CacheUtil.setAllBypassCache(true);
+			}
+
+			long queryStart = System.currentTimeMillis();
+			result = super.selectLatestList(bufferType);
+			long queryEnd = System.currentTimeMillis();
+			logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+
+		} catch (HibernateException he) {
+
+			throw new HibernateException(he);
+
+		} catch (Exception e) {	//exception occurs then retrieve from database
+
+			e.printStackTrace();
+			logger.error("there are some exceptions to do dao query :" + e.toString());
+
+			long queryStart = System.currentTimeMillis();
+			result = super.selectLatestList(bufferType);
+			long queryEnd = System.currentTimeMillis();
+			logger.info(TerracottaUtil.QUERY_DB_SUCCESS+", duration:["+(queryEnd - queryStart)+" ms]");
+		}
+		return result;
+	}
+}

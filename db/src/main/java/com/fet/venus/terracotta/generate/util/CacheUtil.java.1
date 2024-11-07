@@ -1,0 +1,389 @@
+package com.fet.venus.terracotta.generate.util;
+
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Timestamp;
+import  java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fet.venus.terracotta.generate.models.CacheConfig;
+
+
+/**
+ * CacheUtil
+ * terracotta servlet action function
+
+ * @author ecomsoft Jane
+ * @version
+ */
+
+public class CacheUtil{
+	private static Logger logger = LoggerFactory.getLogger("fridayDB");
+	public final static String CACHE_FLAG_CACHE = "CACHE_FLAG";
+    public final static String TOKEN_CACHE = "TOKEN_CACHE";
+    public final static String PACKAGE_CACHE = "PACKAGE_CACHE";
+    public final static String PACKAGELINE_CONTENT_CACHE = "PACKAGELINE_CONTENT_CACHE";
+    public final static String PACKAGELINE_CONTENT_COUNT_CACHE = "PACKAGELINE_CONTENT_COUNT_CACHE";
+    public final static String INDEX_PPV_CONTENT_CACHE = "INDEX_PPV_CONTENT_CACHE";
+    public final static String COMING_SOON_CONTENT_CACHE = "COMING_SOON_CONTENT_CACHE";
+
+    public final static String MESSAGE_SEND_RECORD_CACHE = "MESSAGE_SEND_RECORD_CACHE";
+    public final static String MEMBER_CONTENT_PLAY_CACHE = "MEMBER_CONTENT_PLAY_CACHE";
+    public final static String MOVIE_CONTENT_CACHE = "MOVIE_CONTENT_CACHE";
+    public final static String GROUP_CONTENT_CACHE = "GROUP_CONTENT_CACHE";
+
+    public final static String RECOMMEND_CACHE = "RECOMMEND_CACHE";
+    public final static String LATEST_CACHE = "LATEST_CACHE";
+    public final static String CABINET_CACHE = "CABINET_CACHE";
+    public final static String CABINET_DETAIL_CACHE = "CABINET_DETAIL_CACHE";
+    public final static String CABINET_GROUP_LIST_CACHE = "CABINET_GROUP_LIST_CACHE";
+    public final static String CABINET_GROUP_MEMBER_CACHE = "CABINET_GROUP_MEMBER_CACHE";
+    public final static String WORD_CLOUD_CACHE = "WORD_CLOUD_CACHE";
+
+	public final static String EXCLUSIVE_CACHE = "EXCLUSIVE_CACHE";
+    public final static String BANNER_CACHE = "BANNER_CACHE";
+    public final static String REVIEW_CACHE = "REVIEW_CACHE";
+
+    public final static String USER_BASE_MEMBER_CACHE = "USER_BASE_MEMBER_CACHE";
+    public final static String USER_BASE_CONTENT_CACHE = "USER_BASE_CONTENT_CACHE";
+
+    public final static String KOREAN_MOVIE_CACHE = "KOREAN_MOVIE_CACHE";
+    public final static String CHANNEL_LIST_CONTENT_CACHE = "CHANNEL_LIST_CONTENT_CACHE";
+    public final static String CONTENT_PROGRAM_CACHE = "CONTENT_PROGRAM_CACHE";
+    //分類館嗑影劇
+    public final static String CATEGORY_MENU_REVIEW_CACHE = "CATEGORY_MENU_REVIEW_CACHE";
+    public final static String CATEGORY_MENU_REVIEW_DETAIL_CACHE = "CATEGORY_MENU_REVIEW_DETAIL_CACHE";
+    //分類館系統櫃
+    public final static String CATEGORY_MENU_SYS_CACHE = "CATEGORY_MENU_SYS_CACHE";
+    public final static String CATEGORY_MENU_SYS_DETAIL_CACHE = "CATEGORY_MENU_SYS_DETAIL_CACHE";
+    //分類館臨時櫃
+    public final static String CATEGORY_MENU_CABINET_CACHE = "CATEGORY_MENU_CABINET_CACHE";
+	public final static String CATEGORY_MENU_FILTER_CACHE = "CATEGORY_MENU_FILTER_CACHE";
+	// 首頁固定櫃
+    public final static String FIXED_CABINET_CACHE = "FIXED_CABINET_CACHE";
+    public final static String FIXED_CABINET_REVAMP_CACHE = "FIXED_CABINET_REVAMP_CACHE";
+
+    public final static String SCATEGORY_MENU_RECOMMEND_CACHE = "SCATEGORY_MENU_RECOMMEND_CACHE";
+    public final static String SCATEGORY_MENU_ALL_CACHE = "SCATEGORY_MENU_ALL_CACHE";
+    public final static String SCATEGORY_MENU_CACHE = "SCATEGORY_MENU_CACHE";
+    public final static String SCATEGORY_MENU_TEMPLATE_CACHE = "SCATEGORY_MENU_TEMPLATE_CACHE";
+    public final static String SCATEGORY_MENU_TEMPLATE_CONTENT_CACHE = "SCATEGORY_MENU_TEMPLATE_CONTENT_CACHE";
+    public final static String SCATEGORY_MENU_VIDEOLIST_CACHE = "SCATEGORY_MENU_VIDEOLIST_CACHE";
+
+    public final static String SPECIAL_EVENT_CACHE = "SPECIAL_EVENT_CACHE";
+
+	public final static String FOURK_COUNTER_CACHE = "FOURK_COUNTER_CACHE";
+
+	public final static String MOST_VIEW_CACHE = "MOST_VIEW_CACHE"; // 人氣排行榜
+
+	// Onboarding 類型推薦櫃
+	public final static String CATEGORY_RECOMMEND_CONTENT_CACHE = "CATEGORY_RECOMMEND_CONTENT_CACHE";
+	public final static String CATEGORY_RECOMMEND_MEMBER_CACHE = "CATEGORY_RECOMMEND_MEMBER_CACHE";
+
+    public final static String enableCacheTRUE = "true";
+    public final static String enableCacheFALSE = "false";
+    public static boolean bypassCache = false;
+
+    public final static String packageCacheFlag = "package_cache_flag";
+    public final static String packageLineContentCacheFlag = "packageline_content_cache_flag";
+    public final static String packageLineContentCountCacheFlag = "packageline_content_count_cache_flag";
+    public final static String IndexPPVContentCacheFlag = "indexPPV_content_cache_flag";
+    public final static String tokenCacheFlag = "token_cache_flag";
+    public final static String messageSendRecordCacheFlag = "message_send_record_cache_flag";
+    public final static String memberContentPlayCacheFlag = "member_content_play_cache_flag";
+    public final static String memberContentPlayId = "member_content_play_id";
+    public final static String comingSoonContentCacheFlag = "coming_soon_content_cache_flag";
+
+    public final static String recommendCacheFlag = "recommend_cache_flag";
+    public final static String latestCacheFlag = "latest_cache_flag";
+    public final static String cabinetCacheFlag = "cabinet_cache_flag";
+    public final static String cabinetDetailCacheFlag = "cabinet_detail_cache_flag";
+    public final static String cabinetGroupListCacheFlag = "cabinet_group_list_cache_flag";
+    public final static String cabinetGroupMemberCacheFlag = "cabinet_group_member_cache_flag";
+    public final static String wordCloudCacheFlag = "word_cloud_cache_flag";
+
+	public final static String exclusiveCacheFlag = "exclusive_cache_flag";
+    public final static String bannerCacheFlag = "banner_cache_flag";
+    public final static String reviewCacheFlag = "review_cache_flag";
+
+    public final static String userBaseContentCacheFlag = "user_base_content_cache_flag";
+    public final static String userBaseMemberCacheFlag = "user_base_member_cache_flag";
+
+    public final static String koreanMovieCacheFlag = "korean_movie_cache_flag";
+    public final static String channelListContentCacheFlag = "channel_list_content_cache_flag";
+    public final static String contentProgramCacheFlag = "content_program_cache_flag";
+    //分類館嗑影劇
+    public final static String categoryMenuReviewCacheFlag = "category_menu_review_cache_flag";
+    public final static String categoryMenuReviewDetailCacheFlag = "category_menu_review_detail_cache_flag";
+    //分類館系統櫃
+    public final static String categoryMenuSysCacheFlag = "category_menu_Sys_cache_flag";
+    public final static String categoryMenuSysDetailCacheFlag = "category_menu_Sys_detail_cache_flag";
+    //分類館臨時櫃
+    public final static String categoryMenuCabinetCacheFlag = "category_menu_cabinet_cache_flag";
+    //首頁固定櫃
+    public final static String fixedCabinetCacheFlag = "fixed_cabinet_cache_flag";
+    public final static String fixedCabinetRevampCacheFlag = "fixed_cabinet_revamp_cache_flag";
+
+    public final static String specialEventCacheFlag = "special_event_cache_flag";
+
+    public final static String movieContentModifyDateTime = "movieContentModifyDateTime";
+    public final static String groupContentModifyDateTime = "groupContentModifyDateTime";
+    public final static String categoryMenuFilterCacheFlag = "category_menu_filter_cache_flag";
+
+    public final static String scategoryMenuRecommendCacheFlag = "scategory_menu_recommend_cache_flag";
+    public final static String scategoryMenuCacheFlag = "scategory_menu_cache_flag";
+    public final static String scategoryMenuTemplateCacheFlag = "scategory_menu_template_cache_flag";
+    public final static String scategoryMenuTemplateContentCacheFlag = "scategory_menu_template_content_cache_flag";
+    public final static String scategoryMenuVideolistCacheFlag = "scategory_menu_videolist_cache_flag";
+    public final static String fourkCounterCacheFlag = "fourk_counter_cache_flag";
+
+    public final static String mostViewCacheFlag = "most_view_cache_flag"; // 人氣排行榜
+
+    //	Onboarding 類型推薦櫃
+    public final static String categoryRecommendContentCacheFlag = "category_recommend_content_cache_flag";
+    public final static String categoryRecommendMemberCacheFlag = "category_recommend_member_cache_flag";
+
+    public final static String setLocalBypassCacheTrue = "setBypassCacheTrue";
+    public final static String setLocalBypassCacheFalse = "setBypassCacheFalse";
+    public final static String setAllBypassCacheTrue = "setAllBypassCacheTrue";
+    public final static String setAllBypassCacheFalse = "setAllBypassCacheFalse";
+
+    public static int MAX_THREADS = 5;
+    public static int QUEUE_CAPACITY = 1000;
+    public static int LOAD_SLEEP = 5000;
+
+    public final static String dateFormat = "yyyy-MM-dd HH:mm:ss";
+
+    private TerracottaUtil terracottaUtil = new TerracottaUtil();
+
+ 	public CacheUtil(){
+
+ 	}
+
+ 	synchronized public static String dateToString(Date date){
+
+		SimpleDateFormat current = new SimpleDateFormat(dateFormat);
+		return current.format(date);
+
+	}
+
+    synchronized public static Date stringToDate(String date) throws ParseException{
+
+		DateFormat formatter = new SimpleDateFormat(dateFormat , Locale.ENGLISH);
+		Date startDate = null;
+		startDate = (Date)formatter.parse(date);
+
+		return startDate;
+	}
+
+    synchronized public static String getCurrentTime(){
+		Calendar rightNow = Calendar.getInstance();
+		Date now = rightNow.getTime();
+		SimpleDateFormat current = new SimpleDateFormat(dateFormat);
+		return current.format(now);
+	}
+
+    synchronized public static Date convertDateTimeColumn(Date dateTime){
+		Date date = null;
+
+		if(dateTime != null){
+			Timestamp timestamp = new Timestamp(dateTime.getTime());
+			date = new Date(timestamp.getTime());
+		}
+
+		return date;
+	}
+
+    public boolean isQueryCache(String cacheFlag) throws TerracottaCacheException{
+    	boolean useCache = true;
+    	String enableCacheFlag = "";
+
+    	if(CacheUtil.bypassCache){
+    		logger.info("bypassCache = true, get data from db");
+    		useCache = false;
+    	}else{
+    		enableCacheFlag = getCacheFlagValue(cacheFlag);
+    		if(!enableCacheFlag.equals(CacheUtil.enableCacheTRUE)){
+    			useCache = false;
+    		}
+    	}
+    	return useCache;
+    }
+
+    public boolean isUpdateCache(String cacheFlag) throws TerracottaCacheException{
+    	boolean useCache = true;
+    	String enableCacheFlag = "";
+
+    	if(CacheUtil.bypassCache){
+    		logger.info("bypassCache = true, insert/update data to db");
+    		useCache = false;
+    	}else{
+    		enableCacheFlag = getCacheFlagValue(cacheFlag);
+    		if(!enableCacheFlag.equals(CacheUtil.enableCacheTRUE)){
+    			useCache = false;
+    		}
+    	}
+    	return useCache;
+    }
+
+  //test get cache data, return time
+    public String CacheReadWriteTest(){
+
+        String returnStr = "";
+        try {
+
+            long startTime = System.currentTimeMillis();
+            Object result = null;
+            terracottaUtil.putToCache(CacheUtil.CACHE_FLAG_CACHE, "testFlag", "testFlag");
+            result = terracottaUtil.getFromCache(CacheUtil.CACHE_FLAG_CACHE, "testFlag");
+            long endTime = System.currentTimeMillis();
+
+
+           returnStr = "the cacheReadWriteTest took "+(endTime-startTime)+" ms to put/get value.";
+           logger.debug("the cacheReadTest took "+(endTime-startTime)+" ms to put/get value.");
+
+
+        }catch (Exception e) {
+            logger.warn("there  are some exception to do CacheReadTest:"+e.toString());
+            returnStr = "there  are some exception to do CacheReadTest: "+e.toString();
+            e.printStackTrace();
+        }
+
+        return returnStr;
+
+    }
+
+
+    public String getCacheFlagValue(String flagKey) throws TerracottaCacheException {
+
+        CacheConfig terracottaOpConfig;
+        String returnFlagValue = "false";
+
+        terracottaOpConfig = (CacheConfig) terracottaUtil.getFromCache(CacheUtil.CACHE_FLAG_CACHE, flagKey);
+
+        // cache flag is not in cache, get from db
+        if(null == terracottaOpConfig){
+
+            logger.warn("The cache Flag [" + flagKey+ "] you are getting is not in the cache, return false and put to cache");
+            terracottaOpConfig = new CacheConfig();
+            terracottaOpConfig.setIdentifier(flagKey);
+            terracottaOpConfig.setValue("false");
+            terracottaOpConfig.setLast_update(new Date());
+
+            // put to cache
+            terracottaUtil.putToCache(CacheUtil.CACHE_FLAG_CACHE, flagKey, terracottaOpConfig);
+
+        }else{
+            returnFlagValue = terracottaOpConfig.getValue();
+            logger.debug("["+flagKey+"] value is "+terracottaOpConfig.getValue());
+        }
+
+		return returnFlagValue;
+
+    }
+
+    public void setCacheFlag(String flagkey, String value) throws TerracottaCacheException {
+
+    	logger.info("set key[" + flagkey + "], value = " + value);
+        try {
+
+            CacheConfig terracottaOpConfig = new CacheConfig();
+            terracottaOpConfig.setIdentifier(flagkey);
+            terracottaOpConfig.setValue(value);
+            terracottaOpConfig.setLast_update(new Date());
+
+            terracottaUtil.putToCache(CACHE_FLAG_CACHE, flagkey, terracottaOpConfig);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("there are some exception to setCacheFlag["+flagkey+"] :" + e.toString());
+            throw new TerracottaCacheException(TerracottaUtil.PUT_DATA_ERROR+":"+e.toString());
+
+        }finally{
+
+        }
+    }
+
+    public static boolean setAllBypassCache(boolean bypassCache){
+    	logger.info("set all clients bypassCache value to "+bypassCache);
+		CacheUtil.bypassCache = bypassCache;
+		boolean returnVal = true;
+		try{
+			if(bypassCache){
+				returnVal = sendPost(CacheUtil.setLocalBypassCacheTrue);
+			}
+			else{
+				returnVal = sendPost(CacheUtil.setLocalBypassCacheFalse);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+
+		}
+		return returnVal;
+	}
+
+    private static boolean sendPost(String action) throws IOException{
+    	/**get nas host configuration **/
+    	boolean returnVal = true;
+    	String hostStr = PropertiesUtil.getCacheProperties().getProperty("clients.host");
+    	if(!hostStr.equals("null")){
+
+    		String[] hosts = hostStr.split(",");
+
+			String url;
+			URL obj;
+			HttpURLConnection con;
+			int responseCode = 0;
+			for(String host : hosts){
+				try {
+					url = "http://"+host+"/api/TerracottaControllerServlet";
+					obj = new URL(url);
+					con = (HttpURLConnection) obj.openConnection();
+					con.setRequestMethod("POST");
+
+					con.setRequestProperty("User-Agent", "Mozilla/5.0");
+					con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
+
+					String data = "action=" + action;
+
+					con.setDoOutput(true);
+					DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+					// wr.writeBytes(data);
+					wr.write(data.getBytes("utf-8"));// 為了傳送utf8的文字改成這個
+					wr.flush();
+					wr.close();
+
+					responseCode = con.getResponseCode();
+					logger.info("Sending 'POST' request to URL : " + url);
+					logger.info("Post parameters : " + data);
+					logger.info("Response Code : " + responseCode);
+
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					returnVal = false;
+					logger.error(TerracottaUtil.SET_BYPASS_CACHE_ERROR+action+" to host ["+host+"] failed! "+e.toString());
+				}finally{
+					if(responseCode >= 400){
+						logger.error(action+" to host ["+host+"] failed!");
+						returnVal = false;
+					}
+				}
+			}
+    	}else{
+    		 logger.error("client hosts didn`t in config ");
+    	}
+		return returnVal;
+	}
+
+}

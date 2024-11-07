@@ -1,0 +1,164 @@
+package com.fet.venus.terracotta.generate.util;
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
+
+
+/**
+ * TerracottaUtil, terracotta  function: getCache,
+ *    put, get, remove
+ *
+ * @author  ecomsoft Jane
+ */
+
+public class TerracottaUtil {
+
+	private static  CacheManager cacheManager ;
+	private static Logger logger = LoggerFactory.getLogger("fridayDB");
+	public static String CACHEMANAGER_NOT_INITIALZED_ERROR = "message=[7001]CacheManager is not initialzed";
+	public static String CANNOT_RETRIEVE_CACHE_ERROR = "message=[7002]Can't retrieve cache";
+	public static String GET_DATA_ERROR = "message=[7003]Get data from cache failure";
+	public static String PUT_DATA_ERROR = "message=[7004]Put data to cache failure";
+	public static String REMOVE_DATA_ERROR = "message=[7005]Remove data from cache failure";
+	public static String SEARCH_DATA_ERROR = "message=[7006]Search data from cache failure";
+	public static String DATA_INCONSISTENT_ERROR = "message=[7007]DB/Cache data inconsistent error";
+	public static String QUERY_DB_SUCCESS = "message=[7008]Query from db success";
+	public static String QUERY_CACHE_SUCCESS = "message=[7009]Query from cache success";
+	public static String UPDATE_CACHE_SUCCESS = "message=[7010]Insert/Update cache success";
+	public static String UPDATE_DB_SUCCESS = "message=[7011]Insert/Update db success";
+	public static String UPDATE_DB_ERROR = "message=[7012]Insert/Update db failure";
+	public static String SET_BYPASS_CACHE_ERROR = "message=[7013]";
+	public static String LOAD_DATA_ERROR = "message=[7014]Load data to cache error";
+	public static String COMPARE_DATA_ERROR = "message=[7015]Compare data error";
+
+
+	// get cache by cache name
+	public Cache getCache(String cacheName) throws TerracottaCacheException{
+		Cache cache = null;
+		//logger.debug("start to  get cache: "+cacheName);
+        try{
+        	cacheManager = (CacheManager) SpringUtil.getBean("cacheManager");
+        	if (cacheManager != null) {
+        		cache = (Cache) cacheManager.getEhcache(cacheName);
+        	    if(null == cache){
+
+        	    	throw new TerracottaCacheException(TerracottaUtil.CANNOT_RETRIEVE_CACHE_ERROR);
+
+    	    	}
+        	}else {
+        		throw new TerracottaCacheException(TerracottaUtil.CACHEMANAGER_NOT_INITIALZED_ERROR);
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new TerracottaCacheException(TerracottaUtil.CANNOT_RETRIEVE_CACHE_ERROR+":"+e.toString());
+        }
+
+        return cache;
+    }
+
+	// get cache and new key,value Element put to cache
+	public void putToCache(String cacheName, String key, Object value) throws TerracottaCacheException{
+
+		try{
+    		Cache cache = getCache(cacheName) ;
+    		Element element = new Element(key, value);
+	        cache.put(element);
+	        logger.debug("put key["+key+"]  to cache "+cacheName+" success");
+    	}catch(Exception e){
+    	    e.printStackTrace();
+    	    throw new TerracottaCacheException(TerracottaUtil.PUT_DATA_ERROR+":"+e.toString());
+        }
+    }
+
+
+    //get Object from cache by cacheName and Key
+    public Object getFromCache(String cacheName, String key) throws TerracottaCacheException{
+
+    	Object returnObj = null;
+    	try{
+    		Cache cache = getCache(cacheName) ;
+	        Element element = cache.get(key);
+
+	        if (element != null) {
+	        	returnObj = element.getObjectValue();
+	        }
+
+    	}catch(Exception e){
+    	    e.printStackTrace();
+    	    throw new TerracottaCacheException(TerracottaUtil.GET_DATA_ERROR+":"+e.toString());
+        }
+
+        return returnObj;
+    }
+
+    //remove all data from specific cache_name
+    public boolean removeAllFromCache(String cacheName) throws TerracottaCacheException{
+
+        try{
+
+
+            Cache cache = getCache(cacheName) ;
+
+            logger.debug("cache ["+cache.getName()+"] status: " + cache.getStatus()+", start to removeAll");
+            cache.removeAll();
+
+            logger.debug("remove all from cache success");
+
+            return true;
+
+        }catch(Exception e){
+            e.printStackTrace();
+            throw new TerracottaCacheException(TerracottaUtil.REMOVE_DATA_ERROR+" :"+e.toString());
+        }
+    }
+
+    // return true if key in cache
+    public boolean isKeyDataInCache(String cacheName, Object key) throws TerracottaCacheException{
+
+    	try{
+            Cache cache = getCache(cacheName);
+
+            if(cache.isKeyInCache(key)){
+            	return true;
+            }
+            else{
+            	return false;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+            logger.error("check if key in cache failure");
+            throw new TerracottaCacheException("check key ["+key+"] from cache ["+cacheName+"] failed -"+e.toString());
+        }
+    }
+
+    // remove specific key data from cache
+    public boolean removeKeyDataFromCache(String cacheName, Object key) throws TerracottaCacheException{
+
+
+    	try{
+            Cache cache = getCache(cacheName);
+
+            if(isKeyDataInCache(cacheName, key)){
+            	cache.remove(key);
+            	//logger.debug("Remove key ["+key+"] from cache ["+cacheName+"]  success");
+            }
+            else{
+            	logger.debug("key ["+key+"] data is not in cache");
+            }
+
+            return true;
+
+        }catch(Exception e){
+            e.printStackTrace();
+
+            throw new TerracottaCacheException(TerracottaUtil.REMOVE_DATA_ERROR+":"+e.toString());
+        }
+    }
+
+}

@@ -27,7 +27,6 @@ import java.time.Duration;
 @Setter
 @Slf4j
 @Configuration
-@EnableCaching
 @EnableCouchbaseRepositories(basePackages = {"com.fet.venus.db.couchbase.repository"})
 public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
 
@@ -83,33 +82,4 @@ public class CouchbaseConfig extends AbstractCouchbaseConfiguration {
         }
     }
 
-    @Bean
-    public CouchbaseCacheManager cacheManager(CouchbaseTemplate couchbaseTemplate) throws Exception {
-
-//        JsonTranscoder jacksonTranscoder = JsonTranscoder.create(JacksonJsonSerializer.create());
-//
-//        var cacheConfiguration = CouchbaseCacheConfiguration.defaultCacheConfig()
-//                .entryExpiry(Duration.ofMinutes(10)) // Example expiry duration
-//                .disableCachingNullValues()
-//                .valueTranscoder(jacksonTranscoder);
-//
-//        return CouchbaseCacheManager.builder(couchbaseTemplate.getCouchbaseClientFactory())
-//                .cacheDefaults(cacheConfiguration)
-//                .build();
-
-        JsonTranscoder jsonTranscoder = JsonTranscoder.create(DefaultJsonSerializer.create());
-
-//        CouchbaseCacheManager.CouchbaseCacheManagerBuilder builder = CouchbaseCacheManager.CouchbaseCacheManagerBuilder
-//                .fromConnectionFactory(couchbaseTemplate.getCouchbaseClientFactory());
-        CouchbaseCacheManager.CouchbaseCacheManagerBuilder builder = CouchbaseCacheManager
-                .builder(couchbaseTemplate.getCouchbaseClientFactory().withScope("auth"));
-
-        builder.withCacheConfiguration("token", CouchbaseCacheConfiguration
-                .defaultCacheConfig()
-                .computePrefixWith(cacheName -> "")
-                .valueTranscoder(jsonTranscoder)
-                .collection("token")
-        );
-        return builder.build();
-    }
 }
