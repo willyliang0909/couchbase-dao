@@ -1,7 +1,6 @@
 package com.fet.venus.db.couchbase.dao.impl;
 
 import com.fet.venus.db.couchbase.config.CacheKey;
-import com.fet.venus.db.couchbase.config.CouchbaseCacheConfig;
 import com.fet.venus.db.couchbase.dao.CouchbaseCacheDao;
 import com.fet.venus.db.couchbase.repository.TokenCouchbaseRepository;
 import com.fet.venus.db.dao.ITokenDAO;
@@ -12,8 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Primary
 @RequiredArgsConstructor
 @Repository("tokenCBDAO")
@@ -23,14 +20,11 @@ public class TokenCouchbaseDAOImpl extends AbstractHibernateDaoImpl<Token> imple
 
     private final TokenDAOJPAImpl tokenDAOJPA;
 
-    private final CouchbaseCacheConfig cacheConfig;
-
     private final CouchbaseCacheDao cacheDao;
 
     @Override
-//    @TokenUpdate
     public void insertToken(Token token) {
-        cacheDao.saveByRepository(
+        cacheDao.save(
                 CacheKey.USE_TOKEN_CACHE,
                 token,
                 couchbaseRepository::save,
@@ -42,9 +36,8 @@ public class TokenCouchbaseDAOImpl extends AbstractHibernateDaoImpl<Token> imple
     }
 
     @Override
-//    @TokenUpdate
     public void updateToken(Token token) {
-        cacheDao.saveByRepository(
+        cacheDao.save(
                 CacheKey.USE_TOKEN_CACHE,
                 token,
                 couchbaseRepository::save,
@@ -57,27 +50,24 @@ public class TokenCouchbaseDAOImpl extends AbstractHibernateDaoImpl<Token> imple
 
     @Override
     public Token selectTokenByToken(String token) {
-        return cacheDao.findByRepository(
+        return cacheDao.get(
                 CacheKey.USE_TOKEN_CACHE,
                 () -> couchbaseRepository.findById(token),
-                () -> Optional.ofNullable(tokenDAOJPA.selectTokenByToken(token)),
+                () -> tokenDAOJPA.selectTokenByToken(token),
                 couchbaseRepository::save
         ).orElse(null);
     }
 
     @Override
     public Token selectTokenByFetToken(String fetToken) {
-        return cacheDao.findByRepository(
+        return cacheDao.get(
                 CacheKey.USE_TOKEN_CACHE,
                 () -> couchbaseRepository
                         .findAllByFetTokenOrderByExpireDateTimeDesc(fetToken).stream()
                         .findFirst(),
-                () -> Optional.ofNullable(tokenDAOJPA.selectTokenByToken(fetToken)),
+                () -> tokenDAOJPA.selectTokenByToken(fetToken),
                 couchbaseRepository::save
         ).orElse(null);
     }
 
-    private boolean isQueryCache() {
-        return cacheConfig.isQueryCache(CacheKey.USE_TOKEN_CACHE);
-    }
 }

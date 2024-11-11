@@ -2,9 +2,9 @@ package com.fet.venus.db.couchbase.config;
 
 import com.couchbase.client.java.codec.JacksonJsonSerializer;
 import com.couchbase.client.java.codec.JsonTranscoder;
-import com.fet.venus.db.models.Token;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +17,7 @@ import org.springframework.data.couchbase.core.CouchbaseTemplate;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Configuration
 @EnableCaching
 @RequiredArgsConstructor
@@ -63,8 +64,4 @@ public class CouchbaseCacheConfig {
         return builder.build();
     }
 
-    @Bean
-    public CouchbaseCacheManager cacheTokenManager(CouchbaseTemplate template) {
-        return new CouchbaseCacheManagerFactoryBean(template, CacheKey.TOKEN_CACHE, Token.class).getObject();
-    }
 }
