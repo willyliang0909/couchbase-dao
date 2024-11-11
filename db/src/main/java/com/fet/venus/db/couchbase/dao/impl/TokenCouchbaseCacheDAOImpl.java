@@ -2,6 +2,7 @@ package com.fet.venus.db.couchbase.dao.impl;
 
 import com.fet.venus.db.couchbase.config.CacheKey;
 import com.fet.venus.db.couchbase.config.CouchbaseCacheConfig;
+import com.fet.venus.db.couchbase.dao.CouchbaseCacheDao;
 import com.fet.venus.db.couchbase.repository.TokenCouchbaseRepository;
 import com.fet.venus.db.dao.ITokenDAO;
 import com.fet.venus.db.dao.impl.AbstractHibernateDaoImpl;
@@ -13,11 +14,13 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository("tokenCBCacheDAO")
 @RequiredArgsConstructor
 @CacheConfig(
         cacheNames = "token",
-        cacheManager = "cacheBeanManager"
+        cacheManager = "cacheTokenManager"
 )
 public class TokenCouchbaseCacheDAOImpl extends AbstractHibernateDaoImpl<Token> implements ITokenDAO {
 
@@ -26,6 +29,8 @@ public class TokenCouchbaseCacheDAOImpl extends AbstractHibernateDaoImpl<Token> 
     private final TokenDAOJPAImpl tokenDAOJPA;
 
     private final CouchbaseCacheConfig cacheConfig;
+
+    private final CouchbaseCacheDao couchbaseCacheDao;
 
     @Override
     @CachePut(key = "#toke.token", condition = "#root.target.isQueryCache()")
@@ -47,16 +52,14 @@ public class TokenCouchbaseCacheDAOImpl extends AbstractHibernateDaoImpl<Token> 
 
     @Override
     public Token selectTokenByFetToken(String fetToken) {
-        return couchbaseRepository
-                .findAllByFetTokenOrderByExpireDateTimeDesc(fetToken).stream()
-                .findFirst()
-                .orElseGet(() -> {
-                    var result = tokenDAOJPA.selectTokenByFetToken(fetToken);
-                    if (result != null) {
-                        couchbaseRepository.save(result);
-                    }
-                    return result;
-                });
+        return couchbaseCacheDao.findByRepository(
+                CacheKey.USE_TOKEN_CACHE,
+                () -> couchbaseRepository
+                        .findAllByFetTokenOrderByExpireDateTimeDesc(fetToken).stream()
+                        .findFirst(),
+                () -> Optional.ofNullable(tokenDAOJPA.selectTokenByToken(fetToken)),
+                couchbaseRepository::save
+        ).orElse(null);
     }
 
     private boolean isQueryCache() {
