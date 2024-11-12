@@ -11,4 +11,7 @@ public class CacheKey {
     public final static String USER_CACHE = "user";
     public final static String USE_USER_CACHE = "use_user_cache";
 
+    public final static String LATEST_REVAMP_CACHE = "latest_revamp";
+    public final static String USE_LATEST_REVAMP_CACHE = "use_latest_revamp_cache";
+
 }
