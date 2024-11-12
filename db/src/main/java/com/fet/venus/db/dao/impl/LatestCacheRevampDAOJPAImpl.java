@@ -16,6 +16,6 @@ public class LatestCacheRevampDAOJPAImpl extends AbstractHibernateDaoImpl<Latest
 
     @Override
     public List<LatestCacheRevamp> selectLatestList(byte nBufferType) {
-        return repository.findAllByBufferType(nBufferType);
+        return repository.findAllByBufferTypeOrderByOrderIdAsc(nBufferType);
     }
 }

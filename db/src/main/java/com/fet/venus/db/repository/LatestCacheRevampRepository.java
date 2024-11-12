@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface LatestCacheRevampRepository extends JpaRepository<LatestCacheRevamp, LatestCacheRevampId> {
 
-    List<LatestCacheRevamp> findAllByBufferType(byte contentType);
+    List<LatestCacheRevamp> findAllByBufferTypeOrderByOrderIdAsc(byte contentType);
 }
