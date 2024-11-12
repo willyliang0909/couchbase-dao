@@ -9,7 +9,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.couchbase.cache.CouchbaseCacheConfiguration;
 import org.springframework.data.couchbase.cache.CouchbaseCacheManager;
 import org.springframework.data.couchbase.core.CouchbaseTemplate;
@@ -46,7 +45,6 @@ public class CouchbaseCacheConfig {
         return isCacheable();
     }
 
-    @Primary
     @Bean
     public CouchbaseCacheManager cacheManager(CouchbaseTemplate template) {
 

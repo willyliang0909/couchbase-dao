@@ -51,7 +51,11 @@ public class CouchbaseCacheDao {
     ) {
         if (cacheConfig.isQueryCache(userCacheKey)) {
             log.info("from cache");
-            return cacheFunction.get().or(() -> {
+            Optional<T> cacheResult = cacheFunction.get();
+            if (cacheResult.isPresent()) {
+                log.info("found in cache");
+                return cacheResult;
+            } else {
                 log.info("is not in cache, search from db");
                 T getResult = getFunction.get();
                 if (getResult != null) {
@@ -60,7 +64,7 @@ public class CouchbaseCacheDao {
                     log.info("saved to cache");
                 }
                 return Optional.ofNullable(getResult);
-            });
+            }
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("cache is disabled");
