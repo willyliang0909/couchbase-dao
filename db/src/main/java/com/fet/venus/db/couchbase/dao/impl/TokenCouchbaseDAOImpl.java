@@ -65,7 +65,7 @@ public class TokenCouchbaseDAOImpl extends AbstractHibernateDaoImpl<Token> imple
                 () -> couchbaseRepository
                         .findAllByFetTokenOrderByExpireDateTimeDesc(fetToken).stream()
                         .findFirst(),
-                () -> tokenDAOJPA.selectTokenByToken(fetToken),
+                () -> tokenDAOJPA.selectTokenByFetToken(fetToken),
                 couchbaseRepository::save
         ).orElse(null);
     }

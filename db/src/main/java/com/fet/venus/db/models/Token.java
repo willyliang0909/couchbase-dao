@@ -1,12 +1,16 @@
 package com.fet.venus.db.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.couchbase.core.mapping.Document;
+import org.springframework.data.couchbase.core.mapping.id.GeneratedValue;
+import org.springframework.data.couchbase.core.mapping.id.IdAttribute;
 import org.springframework.data.couchbase.repository.Collection;
 
 import java.io.Serial;
@@ -15,17 +19,23 @@ import java.util.Date;
 
 @Setter
 @Getter
-@Document
-@Collection("token")
 @Entity
 @Table(name = "venus_token")
+@Document
+@Collection("venus_token")
 public class Token implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Id
     @org.springframework.data.annotation.Id
+    @GeneratedValue
+    @Transient
+    @JsonIgnore
+    private String couchbaseId;
+
+    @Id
+    @IdAttribute
     private String token;
     private String scope;
     private Integer memberId;
