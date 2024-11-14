@@ -30,6 +30,18 @@ public class CacheTest {
 
     private final TestUserService testUserService;
 
+    @GetMapping("/disable/{cacheName}")
+    public String disableCache(@PathVariable String cacheName) {
+        cacheDao.save(CacheKey.CONFIG_CACHE, cacheName, false);
+        return String.format("%s is disabled", cacheName);
+    }
+
+    @GetMapping("/enable/{cacheName}")
+    public String enableCache(@PathVariable String cacheName) {
+        cacheDao.save(CacheKey.CONFIG_CACHE, cacheName, true);
+        return String.format("%s is enabled", cacheName);
+    }
+
     @GetMapping("/binary/{key}/{value}")
     @Cacheable(value = CacheKey.BINARY_CACHE, key = "#key")
     public String cacheBinary(@PathVariable String key, @PathVariable String value) {

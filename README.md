@@ -2,7 +2,7 @@
 
 >couchbase cache 可以由以下幾種方式完成,
 > 主要還是透過couchbase 本身 memory first的儲存機制
-> 1. spring Cacheable, cacheManager
+> 1. spring @Cacheable, cacheManager
 > 2. select object by key
 > 3. use sql++ with index
 

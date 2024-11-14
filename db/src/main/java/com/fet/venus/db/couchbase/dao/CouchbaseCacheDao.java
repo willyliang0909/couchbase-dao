@@ -66,9 +66,7 @@ public class CouchbaseCacheDao {
                 return Optional.ofNullable(getResult);
             }
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("cache is disabled");
-            }
+            log.info("cache is disabled");
             return Optional.ofNullable(getFunction.get());
         }
     }

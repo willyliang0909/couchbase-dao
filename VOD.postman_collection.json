@@ -1,0 +1,535 @@
+{
+	"info": {
+		"_postman_id": "dae5335e-d79d-47fa-8a90-f33d72d1e660",
+		"name": "VOD",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19423798"
+	},
+	"item": [
+		{
+			"name": "token",
+			"item": [
+				{
+					"name": "insert",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"mz6iXcgyxlfzH6gZzhXomdZJiBhK5hmR\",\n    \"effectiveDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"expireDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"platform\": \"PC Web\",\n    \"model\": \"Chrome 12(PC)\",\n    \"scope\": \"member\",\n    \"version\": \"124.0.0.0\",\n    \"udid\": \"1719300035961\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"mz6iXcgyxlfzH6gZzhXomdZJiBhK5hmR\",\n    \"effectiveDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"expireDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"platform\": \"PC Web\",\n    \"model\": \"Chrome 12(PC)\",\n    \"scope\": \"member\",\n    \"version\": \"124.0.0.1\",\n    \"udid\": \"1719300035961\",\n    \"fetToken\": \"h4J4iEeilsuaCwsJPceM\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"123\",\n    \"effectiveDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"expireDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"platform\": \"PC Web\",\n    \"model\": \"Chrome 12(PC)\",\n    \"scope\": \"member\",\n    \"version\": \"124.0.0.0\",\n    \"udid\": \"1719300035961\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/token/123",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"token",
+								"123"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by fetToken",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"123\",\n    \"effectiveDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"expireDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"platform\": \"PC Web\",\n    \"model\": \"Chrome 12(PC)\",\n    \"scope\": \"member\",\n    \"version\": \"124.0.0.0\",\n    \"udid\": \"1719300035961\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/token/fetToken/h4J4iEeilsuaCwsJPceM",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"token",
+								"fetToken",
+								"h4J4iEeilsuaCwsJPceM"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "cache test",
+			"item": [
+				{
+					"name": "disable cache",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/cache/disable/use_token_cache",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cache",
+								"disable",
+								"use_token_cache"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "enable cache",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/cache/enable/use_token_cache",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cache",
+								"enable",
+								"use_token_cache"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "binary testuser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/cache/binary/testuser",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cache",
+								"binary",
+								"testuser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listUser cachable",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/cache/listUser",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cache",
+								"listUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listUser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/cache/listUser",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cache",
+								"listUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "listUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/cache/listUser",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cache",
+								"listUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "isCacheable",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/cache/isCacheable",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cache",
+								"isCacheable"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "isCacheable set",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/cache/isCacheable/false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cache",
+								"isCacheable",
+								"false"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "isQueryCache",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/cache/isQueryCache/false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cache",
+								"isQueryCache",
+								"false"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "testUser",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/cache/testUser",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cache",
+								"testUser"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "latest-revamp",
+			"item": [
+				{
+					"name": "selectLatestList",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/latest-revamp/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"latest-revamp",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "save jpa all",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"contentId\": 26555,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"字幕pseudoid＿決戰38度線【4K】\",\n        \"englishName\": \"Devotion\",\n        \"duration\": 104,\n        \"fridayScore\": 3.8,\n        \"scoreCount\": 6,\n        \"effectiveDateTime\": \"2023-03-08T00:00:00\",\n        \"expireDateTime\": \"2040-10-19T00:00:00\",\n        \"updateEpisode\": null,\n        \"totalEpisode\": -1,\n        \"area\": \"美國\",\n        \"year\": 2022,\n        \"orderId\": 24,\n        \"imageUrl\": \"/MOVIE/3106/3106_1123.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": \"6\",\n        \"isEmpty\": false,\n        \"rating\": 2,\n        \"isSexual\": false,\n        \"introduction\": \"真實故事同名暢銷小說改編，描述韓戰期間，美國非裔戰鬥機飛行員傑西（喬納森梅傑斯 飾）奉命加入突擊戰鬥機中隊，認識了同為戰鬥機駕駛的托馬斯（格蘭鮑威爾 飾）。在美國種族隔離制度之下，兩人發展出血濃於水的兄弟情感、一起執行超過20次戰鬥任務。一次行動中，傑西駕駛的僚機被擊落，一場驚險的救援行動即將展開…。\",\n        \"themeImageUrl\": \"/STILL/3106/3106_2193.jpg\",\n        \"trailerContentId\": 26555,\n        \"trailerStreamingId\": 3107,\n        \"trailerDuration\": 1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 26633,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"蜘蛛驚\",\n        \"englishName\": \"Sting\",\n        \"duration\": 0,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-17T17:28:00\",\n        \"expireDateTime\": \"2034-02-19T00:00:00\",\n        \"updateEpisode\": null,\n        \"totalEpisode\": -1,\n        \"area\": \"澳洲\",\n        \"year\": 2024,\n        \"orderId\": 39,\n        \"imageUrl\": \"/MOVIE/3186/3186_2245.jpg\",\n        \"paymentTag\": \"1,2\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"叛逆少女夏綠蒂，與家人生活在一幢老舊公寓當中。這時家中迎來新生命，導致母親跟繼父無瑕照顧她，讓夏綠蒂備受冷落。沒想到某個暴風雪夜裡，一隻奇異小蜘蛛驚喜闖入她的生命，她決定將牠取名為「死叮」，並當成寵物在玻璃罐中秘密豢養。然而，公寓卻陸續出現寵物失蹤、甚至有人橫死的意外…。\",\n        \"themeImageUrl\": \"/STILL/3186/3186_3803.jpg\",\n        \"trailerContentId\": 26633,\n        \"trailerStreamingId\": 3187,\n        \"trailerDuration\": 1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    }\n    ,\n    {\n        \"contentId\": 222,\n        \"contentType\": 4,\n        \"bufferType\": 1,\n        \"chineseName\": \"夜晚的水母不會游泳\",\n        \"englishName\": \"Jellyfish Can’t Swim in the Night 1\",\n        \"duration\": 30,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-10T00:00:00\",\n        \"expireDateTime\": \"2031-04-07T00:00:00\",\n        \"updateEpisode\": 3,\n        \"totalEpisode\": 3,\n        \"area\": \"日本\",\n        \"year\": 2024,\n        \"orderId\": 5,\n        \"imageUrl\": \"/DRAMA/222/222_4831.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": \"3\",\n        \"isEmpty\": false,\n        \"rating\": 1,\n        \"isSexual\": false,\n        \"introduction\": \"「我」也想像某個人一樣閃耀光輝明天要聊的話題，這週要買的衣服，這些手機（流行趨勢）都會告訴我們答案。想成為不一樣的存在──然而這忙碌的世界卻連讓我們懷有這種願望的時間都沒有。這些與世界有些格格不入的少女們組成了匿名藝術家團體「JELEE」。如果成為不是自己的「我們」──也許就能夠閃耀光輝。\",\n        \"themeImageUrl\": \"/GROUP/222/222_9654.jpg\",\n        \"trailerContentId\": 1,\n        \"trailerStreamingId\": 2983,\n        \"trailerDuration\": 1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"/LOGOGROUP/222/222_1551.png\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 235,\n        \"contentType\": 5,\n        \"bufferType\": 1,\n        \"chineseName\": \"全台露營飆透透\",\n        \"englishName\": \"全台露營飆透透\",\n        \"duration\": 45,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-10T00:00:00\",\n        \"expireDateTime\": \"2031-01-01T00:00:00\",\n        \"updateEpisode\": null,\n        \"totalEpisode\": 2,\n        \"area\": \"台灣\",\n        \"year\": 2024,\n        \"orderId\": 44,\n        \"imageUrl\": \"/DRAMA/235/235_1178.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 1,\n        \"isSexual\": false,\n        \"introduction\": \"全台瘋露營！不論是親子露營、豪華露營、野營，只要你是Camper就看過來！一起跟著露營專家「營火部落－達哥」使用遠傳網路探索全台秘境、開箱超優露營地，體驗最Chill的露營生活！達哥讚嘆遠傳的收訊很好，新遠傳擁有業界最大700MHz黃金低頻連續頻寬，涵蓋更廣、穿透力更強，在戶外、高山、熱門露營區的網路體驗都更穩更順暢！\",\n        \"themeImageUrl\": \"/GROUP/235/235_1764.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"說明小標-preProduction test\",\n        \"logoUrl\": \"/LOGOGROUP/235/235_7822.png\",\n        \"aiBgColor\": \"#F5CFDE\"\n    },\n    {\n        \"contentId\": 200,\n        \"contentType\": 3,\n        \"bufferType\": 1,\n        \"chineseName\": \"孔明＿字幕調整\",\n        \"englishName\": \"パリピ孔明\",\n        \"duration\": 45,\n        \"fridayScore\": 4.3,\n        \"scoreCount\": 10,\n        \"effectiveDateTime\": \"2023-09-27T00:00:00\",\n        \"expireDateTime\": \"2031-01-01T00:00:00\",\n        \"updateEpisode\": 5,\n        \"totalEpisode\": 5,\n        \"area\": \"日本\",\n        \"year\": 2023,\n        \"orderId\": 4,\n        \"imageUrl\": \"/DRAMA/200/200_1360.jpg\",\n        \"paymentTag\": \"0,1\",\n        \"propertyTag\": \"1\",\n        \"isEmpty\": false,\n        \"rating\": 1,\n        \"isSexual\": false,\n        \"introduction\": \"蜀漢丞相諸葛亮（字 孔明） 在五丈原之戰中病死，醒過來後卻發現自己轉生到現代，並在夜店認識了創作歌手月見英子，為了實現她的夢想，孔明自告奮勇成為她的軍師，究竟孔明會如何發揮他的軍事長才來協助英子完成「霸業」呢？\",\n        \"themeImageUrl\": \"/GROUP/200/200_7572.jpg\",\n        \"trailerContentId\": 1,\n        \"trailerStreamingId\": 895,\n        \"trailerDuration\": 3600,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 219,\n        \"contentType\": 3,\n        \"bufferType\": 1,\n        \"chineseName\": \"武媚娘傳奇\",\n        \"englishName\": \"The Empress of China1\",\n        \"duration\": 45,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-18T00:00:00\",\n        \"expireDateTime\": \"2030-04-13T00:00:00\",\n        \"updateEpisode\": 5,\n        \"totalEpisode\": 5,\n        \"area\": \"中國\",\n        \"year\": 2015,\n        \"orderId\": 37,\n        \"imageUrl\": \"/DRAMA/219/219_5734.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"講述從武則天的青澀少女到一代女皇的成長奮鬥史，劇情同時融入權力、愛情、政治鬥爭等爾虞我詐、感人煽情的精彩元素，展現了中國歷史上最傳奇的盛唐風雲人物縱橫交錯的故事。\",\n        \"themeImageUrl\": \"/GROUP/219/219_602.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 64,\n        \"contentType\": 3,\n        \"bufferType\": 1,\n        \"chineseName\": \"絕佳的解決士\",\n        \"englishName\": \"끝내주는 해결사\",\n        \"duration\": 70,\n        \"fridayScore\": 3.9,\n        \"scoreCount\": 10,\n        \"effectiveDateTime\": \"2019-05-29T16:00:00\",\n        \"expireDateTime\": \"2030-01-02T00:00:00\",\n        \"updateEpisode\": \"ost\",\n        \"totalEpisode\": 2,\n        \"area\": \"韓國\",\n        \"year\": 2024,\n        \"orderId\": 29,\n        \"imageUrl\": \"/DRAMA/64/64_3318.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": \"1\",\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"講述女主角遇到好友的弟弟結束海外工作歸國，原本只當成是不懂事的弟弟，現在卻讓她有了與以前完全不同的感覺(福)\",\n        \"themeImageUrl\": \"/GROUP/64/64_41901.png\",\n        \"trailerContentId\": 1,\n        \"trailerStreamingId\": 1344,\n        \"trailerDuration\": 360,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 238,\n        \"contentType\": 3,\n        \"bufferType\": 1,\n        \"chineseName\": \"凌晨兩點的灰姑娘\",\n        \"englishName\": \"새벽 2시의 신데렐라\",\n        \"duration\": 60,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-10T00:00:00\",\n        \"expireDateTime\": \"2030-01-01T00:00:00\",\n        \"updateEpisode\": null,\n        \"totalEpisode\": 2,\n        \"area\": \"韓國\",\n        \"year\": 2024,\n        \"orderId\": 3,\n        \"imageUrl\": \"/DRAMA/238/238_7389.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": true,\n        \"introduction\": \"▲申鉉彬無懼14歲年齡差！劇中大談姐弟戀 ▲財閥公子文相敏挽回戀情— 逆襲姐姐芳心 ▲《金秘書為何那樣》《還魂》導演朴峻華製作\\n決心和年下財閥男友分手的極現實主義者允瑞和試圖挽回她的浪漫主義者柱元之間的愛情故事。\",\n        \"themeImageUrl\": \"/GROUP/238/238_5070.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"免費集數更新中，付費會員免廣告\",\n        \"logoUrl\": \"/LOGOGROUP/238/238_1343.png\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 26498,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"風再起時\",\n        \"englishName\": \"Love After Love\",\n        \"duration\": 1,\n        \"fridayScore\": 3,\n        \"scoreCount\": 1,\n        \"effectiveDateTime\": \"2024-05-01T00:00:00\",\n        \"expireDateTime\": \"2029-04-02T00:00:00\",\n        \"updateEpisode\": -1,\n        \"totalEpisode\": -1,\n        \"area\": \"中國\",\n        \"year\": 2020,\n        \"orderId\": 2,\n        \"imageUrl\": \"/MOVIE/2935/2935_16236.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": \"2\",\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"先天失明的阿里，原本被認定往後日子將默默無光，一日，與姊姊返家途中和小混混起了衝突，阿里無所畏懼的揮拳，讓下班經過的拳擊教練阿卡什印象深刻。阿卡什拋開內心的質疑，並說服阿里的雙親讓阿里姊弟一起練習拳擊。阿卡什想讓阿里進一步到拳擊學校接受專業的訓練，沒想到阿卡什的宿敵卻提出要阿里與自己的弟子羅尼對打，阿里贏了就能獲得入學資格，阿里輸了，阿卡什就必須永遠退出拳擊圈。。。本片由真實盲人演出，激勵人心。\",\n        \"themeImageUrl\": \"/STILL/2935/2935_2948.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"適用方案：影劇暢看 | 用券 | 單次付費\",\n        \"logoUrl\": \"/LOGOMOVIE/2935/2935_7458.png\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 1055,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"陰櫥【數位珍藏】\",\n        \"englishName\": \"The Closet\",\n        \"duration\": 97,\n        \"fridayScore\": 4,\n        \"scoreCount\": 1,\n        \"effectiveDateTime\": \"2018-08-29T00:00:00\",\n        \"expireDateTime\": \"2028-02-01T00:00:00\",\n        \"updateEpisode\": -1,\n        \"totalEpisode\": -1,\n        \"area\": \"韓國\",\n        \"year\": 2020,\n        \"orderId\": 22,\n        \"imageUrl\": \"/MOVIE/1173/1173_181851.jpg\",\n        \"paymentTag\": \"4\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"自從妻子過世後，尚元和女兒的關係越來越疏遠，於是他決定帶著女兒搬到鄉下，修復彼此的關係。但即使搬家後，尚元仍專注於自己的工作，不多關心女兒。女兒多了更多獨處的時間，且開始表現出奇怪和令人不安的行為，而尚元也開始在家中遭遇離奇的現象。某天，女兒竟突然在壁櫥前消失得無影無蹤……。\",\n        \"themeImageUrl\": \"/STILL/1173/1173_7753.jpg\",\n        \"trailerContentId\": 1055,\n        \"trailerStreamingId\": 1820,\n        \"trailerDuration\": 1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 26554,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"影片vodid＿監弒器\",\n        \"englishName\": \"CCTV\",\n        \"duration\": 104,\n        \"fridayScore\": 4,\n        \"scoreCount\": 4,\n        \"effectiveDateTime\": \"2023-03-10T00:00:00\",\n        \"expireDateTime\": \"2027-11-01T00:00:00\",\n        \"updateEpisode\": -1,\n        \"totalEpisode\": -1,\n        \"area\": \"韓國\",\n        \"year\": 2021,\n        \"orderId\": 33,\n        \"imageUrl\": \"/MOVIE/3104/3104_4196.jpg\",\n        \"paymentTag\": \"4\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"《哭聲》郭到元主演，呼喚死亡的瞳孔，你能存活下來嗎？兇案現場實地拍攝，超過10年的懸案即將水落石出。。。。。  十年前，一起史無前例的兇殺悲劇，導致8人死亡、1人失蹤。一個企圖為自己頻道帶來突破性觀看人數與訂閱戶的YouTuber，想透過尋找唯一的生還者，以調查整起案件撲朔迷離的真相。當採訪開始，隱藏了十年的可怕事實即將被揭露，時隔十年，未竟的復仇邁向終點……。\",\n        \"themeImageUrl\": \"/STILL/3104/3104_863.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 26706,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"怪醫黑傑克 2024\",\n        \"englishName\": \"BLACK JACK\",\n        \"duration\": 93,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-09T00:00:00\",\n        \"expireDateTime\": \"2027-07-05T00:00:00\",\n        \"updateEpisode\": -1,\n        \"totalEpisode\": -1,\n        \"area\": \"日本\",\n        \"year\": 2024,\n        \"orderId\": 45,\n        \"imageUrl\": \"/MOVIE/3265/3265_4784.png\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"年輕的住院醫師啟介，一邊讀著身在國外的友人來信，一邊回想他們當年的快樂時光，並盤算著朋友回國後怎麼為他洗塵。可是沒過幾天後，他等到的卻是朋友的骨灰罈，以及放在骨灰罈裡的一樣東西…\",\n        \"themeImageUrl\": \"/STILL/3265/3265_3865.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    }\n]\n\n\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/latest-revamp/jpa",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"latest-revamp",
+								"jpa"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "save couchbase",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n    {\n        \"contentId\": 26555,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"字幕pseudoid＿決戰38度線【4K】\",\n        \"englishName\": \"Devotion\",\n        \"duration\": 104,\n        \"fridayScore\": 3.8,\n        \"scoreCount\": 6,\n        \"effectiveDateTime\": \"2023-03-08T00:00:00\",\n        \"expireDateTime\": \"2040-10-19T00:00:00\",\n        \"updateEpisode\": null,\n        \"totalEpisode\": -1,\n        \"area\": \"美國\",\n        \"year\": 2022,\n        \"orderId\": 24,\n        \"imageUrl\": \"/MOVIE/3106/3106_1123.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": \"6\",\n        \"isEmpty\": false,\n        \"rating\": 2,\n        \"isSexual\": false,\n        \"introduction\": \"真實故事同名暢銷小說改編，描述韓戰期間，美國非裔戰鬥機飛行員傑西（喬納森梅傑斯 飾）奉命加入突擊戰鬥機中隊，認識了同為戰鬥機駕駛的托馬斯（格蘭鮑威爾 飾）。在美國種族隔離制度之下，兩人發展出血濃於水的兄弟情感、一起執行超過20次戰鬥任務。一次行動中，傑西駕駛的僚機被擊落，一場驚險的救援行動即將展開…。\",\n        \"themeImageUrl\": \"/STILL/3106/3106_2193.jpg\",\n        \"trailerContentId\": 26555,\n        \"trailerStreamingId\": 3107,\n        \"trailerDuration\": 1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 26633,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"蜘蛛驚\",\n        \"englishName\": \"Sting\",\n        \"duration\": 0,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-17T17:28:00\",\n        \"expireDateTime\": \"2034-02-19T00:00:00\",\n        \"updateEpisode\": null,\n        \"totalEpisode\": -1,\n        \"area\": \"澳洲\",\n        \"year\": 2024,\n        \"orderId\": 39,\n        \"imageUrl\": \"/MOVIE/3186/3186_2245.jpg\",\n        \"paymentTag\": \"1,2\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"叛逆少女夏綠蒂，與家人生活在一幢老舊公寓當中。這時家中迎來新生命，導致母親跟繼父無瑕照顧她，讓夏綠蒂備受冷落。沒想到某個暴風雪夜裡，一隻奇異小蜘蛛驚喜闖入她的生命，她決定將牠取名為「死叮」，並當成寵物在玻璃罐中秘密豢養。然而，公寓卻陸續出現寵物失蹤、甚至有人橫死的意外…。\",\n        \"themeImageUrl\": \"/STILL/3186/3186_3803.jpg\",\n        \"trailerContentId\": 26633,\n        \"trailerStreamingId\": 3187,\n        \"trailerDuration\": 1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    }\n    ,\n    {\n        \"contentId\": 222,\n        \"contentType\": 4,\n        \"bufferType\": 1,\n        \"chineseName\": \"夜晚的水母不會游泳\",\n        \"englishName\": \"Jellyfish Can’t Swim in the Night 1\",\n        \"duration\": 30,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-10T00:00:00\",\n        \"expireDateTime\": \"2031-04-07T00:00:00\",\n        \"updateEpisode\": 3,\n        \"totalEpisode\": 3,\n        \"area\": \"日本\",\n        \"year\": 2024,\n        \"orderId\": 5,\n        \"imageUrl\": \"/DRAMA/222/222_4831.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": \"3\",\n        \"isEmpty\": false,\n        \"rating\": 1,\n        \"isSexual\": false,\n        \"introduction\": \"「我」也想像某個人一樣閃耀光輝明天要聊的話題，這週要買的衣服，這些手機（流行趨勢）都會告訴我們答案。想成為不一樣的存在──然而這忙碌的世界卻連讓我們懷有這種願望的時間都沒有。這些與世界有些格格不入的少女們組成了匿名藝術家團體「JELEE」。如果成為不是自己的「我們」──也許就能夠閃耀光輝。\",\n        \"themeImageUrl\": \"/GROUP/222/222_9654.jpg\",\n        \"trailerContentId\": 1,\n        \"trailerStreamingId\": 2983,\n        \"trailerDuration\": 1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"/LOGOGROUP/222/222_1551.png\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 235,\n        \"contentType\": 5,\n        \"bufferType\": 1,\n        \"chineseName\": \"全台露營飆透透\",\n        \"englishName\": \"全台露營飆透透\",\n        \"duration\": 45,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-10T00:00:00\",\n        \"expireDateTime\": \"2031-01-01T00:00:00\",\n        \"updateEpisode\": null,\n        \"totalEpisode\": 2,\n        \"area\": \"台灣\",\n        \"year\": 2024,\n        \"orderId\": 44,\n        \"imageUrl\": \"/DRAMA/235/235_1178.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 1,\n        \"isSexual\": false,\n        \"introduction\": \"全台瘋露營！不論是親子露營、豪華露營、野營，只要你是Camper就看過來！一起跟著露營專家「營火部落－達哥」使用遠傳網路探索全台秘境、開箱超優露營地，體驗最Chill的露營生活！達哥讚嘆遠傳的收訊很好，新遠傳擁有業界最大700MHz黃金低頻連續頻寬，涵蓋更廣、穿透力更強，在戶外、高山、熱門露營區的網路體驗都更穩更順暢！\",\n        \"themeImageUrl\": \"/GROUP/235/235_1764.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"說明小標-preProduction test\",\n        \"logoUrl\": \"/LOGOGROUP/235/235_7822.png\",\n        \"aiBgColor\": \"#F5CFDE\"\n    },\n    {\n        \"contentId\": 200,\n        \"contentType\": 3,\n        \"bufferType\": 1,\n        \"chineseName\": \"孔明＿字幕調整\",\n        \"englishName\": \"パリピ孔明\",\n        \"duration\": 45,\n        \"fridayScore\": 4.3,\n        \"scoreCount\": 10,\n        \"effectiveDateTime\": \"2023-09-27T00:00:00\",\n        \"expireDateTime\": \"2031-01-01T00:00:00\",\n        \"updateEpisode\": 5,\n        \"totalEpisode\": 5,\n        \"area\": \"日本\",\n        \"year\": 2023,\n        \"orderId\": 4,\n        \"imageUrl\": \"/DRAMA/200/200_1360.jpg\",\n        \"paymentTag\": \"0,1\",\n        \"propertyTag\": \"1\",\n        \"isEmpty\": false,\n        \"rating\": 1,\n        \"isSexual\": false,\n        \"introduction\": \"蜀漢丞相諸葛亮（字 孔明） 在五丈原之戰中病死，醒過來後卻發現自己轉生到現代，並在夜店認識了創作歌手月見英子，為了實現她的夢想，孔明自告奮勇成為她的軍師，究竟孔明會如何發揮他的軍事長才來協助英子完成「霸業」呢？\",\n        \"themeImageUrl\": \"/GROUP/200/200_7572.jpg\",\n        \"trailerContentId\": 1,\n        \"trailerStreamingId\": 895,\n        \"trailerDuration\": 3600,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 219,\n        \"contentType\": 3,\n        \"bufferType\": 1,\n        \"chineseName\": \"武媚娘傳奇\",\n        \"englishName\": \"The Empress of China1\",\n        \"duration\": 45,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-18T00:00:00\",\n        \"expireDateTime\": \"2030-04-13T00:00:00\",\n        \"updateEpisode\": 5,\n        \"totalEpisode\": 5,\n        \"area\": \"中國\",\n        \"year\": 2015,\n        \"orderId\": 37,\n        \"imageUrl\": \"/DRAMA/219/219_5734.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"講述從武則天的青澀少女到一代女皇的成長奮鬥史，劇情同時融入權力、愛情、政治鬥爭等爾虞我詐、感人煽情的精彩元素，展現了中國歷史上最傳奇的盛唐風雲人物縱橫交錯的故事。\",\n        \"themeImageUrl\": \"/GROUP/219/219_602.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 64,\n        \"contentType\": 3,\n        \"bufferType\": 1,\n        \"chineseName\": \"絕佳的解決士\",\n        \"englishName\": \"끝내주는 해결사\",\n        \"duration\": 70,\n        \"fridayScore\": 3.9,\n        \"scoreCount\": 10,\n        \"effectiveDateTime\": \"2019-05-29T16:00:00\",\n        \"expireDateTime\": \"2030-01-02T00:00:00\",\n        \"updateEpisode\": \"ost\",\n        \"totalEpisode\": 2,\n        \"area\": \"韓國\",\n        \"year\": 2024,\n        \"orderId\": 29,\n        \"imageUrl\": \"/DRAMA/64/64_3318.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": \"1\",\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"講述女主角遇到好友的弟弟結束海外工作歸國，原本只當成是不懂事的弟弟，現在卻讓她有了與以前完全不同的感覺(福)\",\n        \"themeImageUrl\": \"/GROUP/64/64_41901.png\",\n        \"trailerContentId\": 1,\n        \"trailerStreamingId\": 1344,\n        \"trailerDuration\": 360,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 238,\n        \"contentType\": 3,\n        \"bufferType\": 1,\n        \"chineseName\": \"凌晨兩點的灰姑娘\",\n        \"englishName\": \"새벽 2시의 신데렐라\",\n        \"duration\": 60,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-10T00:00:00\",\n        \"expireDateTime\": \"2030-01-01T00:00:00\",\n        \"updateEpisode\": null,\n        \"totalEpisode\": 2,\n        \"area\": \"韓國\",\n        \"year\": 2024,\n        \"orderId\": 3,\n        \"imageUrl\": \"/DRAMA/238/238_7389.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": true,\n        \"introduction\": \"▲申鉉彬無懼14歲年齡差！劇中大談姐弟戀 ▲財閥公子文相敏挽回戀情— 逆襲姐姐芳心 ▲《金秘書為何那樣》《還魂》導演朴峻華製作\\n決心和年下財閥男友分手的極現實主義者允瑞和試圖挽回她的浪漫主義者柱元之間的愛情故事。\",\n        \"themeImageUrl\": \"/GROUP/238/238_5070.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"免費集數更新中，付費會員免廣告\",\n        \"logoUrl\": \"/LOGOGROUP/238/238_1343.png\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 26498,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"風再起時\",\n        \"englishName\": \"Love After Love\",\n        \"duration\": 1,\n        \"fridayScore\": 3,\n        \"scoreCount\": 1,\n        \"effectiveDateTime\": \"2024-05-01T00:00:00\",\n        \"expireDateTime\": \"2029-04-02T00:00:00\",\n        \"updateEpisode\": -1,\n        \"totalEpisode\": -1,\n        \"area\": \"中國\",\n        \"year\": 2020,\n        \"orderId\": 2,\n        \"imageUrl\": \"/MOVIE/2935/2935_16236.jpg\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": \"2\",\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"先天失明的阿里，原本被認定往後日子將默默無光，一日，與姊姊返家途中和小混混起了衝突，阿里無所畏懼的揮拳，讓下班經過的拳擊教練阿卡什印象深刻。阿卡什拋開內心的質疑，並說服阿里的雙親讓阿里姊弟一起練習拳擊。阿卡什想讓阿里進一步到拳擊學校接受專業的訓練，沒想到阿卡什的宿敵卻提出要阿里與自己的弟子羅尼對打，阿里贏了就能獲得入學資格，阿里輸了，阿卡什就必須永遠退出拳擊圈。。。本片由真實盲人演出，激勵人心。\",\n        \"themeImageUrl\": \"/STILL/2935/2935_2948.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"適用方案：影劇暢看 | 用券 | 單次付費\",\n        \"logoUrl\": \"/LOGOMOVIE/2935/2935_7458.png\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 1055,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"陰櫥【數位珍藏】\",\n        \"englishName\": \"The Closet\",\n        \"duration\": 97,\n        \"fridayScore\": 4,\n        \"scoreCount\": 1,\n        \"effectiveDateTime\": \"2018-08-29T00:00:00\",\n        \"expireDateTime\": \"2028-02-01T00:00:00\",\n        \"updateEpisode\": -1,\n        \"totalEpisode\": -1,\n        \"area\": \"韓國\",\n        \"year\": 2020,\n        \"orderId\": 22,\n        \"imageUrl\": \"/MOVIE/1173/1173_181851.jpg\",\n        \"paymentTag\": \"4\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"自從妻子過世後，尚元和女兒的關係越來越疏遠，於是他決定帶著女兒搬到鄉下，修復彼此的關係。但即使搬家後，尚元仍專注於自己的工作，不多關心女兒。女兒多了更多獨處的時間，且開始表現出奇怪和令人不安的行為，而尚元也開始在家中遭遇離奇的現象。某天，女兒竟突然在壁櫥前消失得無影無蹤……。\",\n        \"themeImageUrl\": \"/STILL/1173/1173_7753.jpg\",\n        \"trailerContentId\": 1055,\n        \"trailerStreamingId\": 1820,\n        \"trailerDuration\": 1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 26554,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"影片vodid＿監弒器\",\n        \"englishName\": \"CCTV\",\n        \"duration\": 104,\n        \"fridayScore\": 4,\n        \"scoreCount\": 4,\n        \"effectiveDateTime\": \"2023-03-10T00:00:00\",\n        \"expireDateTime\": \"2027-11-01T00:00:00\",\n        \"updateEpisode\": -1,\n        \"totalEpisode\": -1,\n        \"area\": \"韓國\",\n        \"year\": 2021,\n        \"orderId\": 33,\n        \"imageUrl\": \"/MOVIE/3104/3104_4196.jpg\",\n        \"paymentTag\": \"4\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"《哭聲》郭到元主演，呼喚死亡的瞳孔，你能存活下來嗎？兇案現場實地拍攝，超過10年的懸案即將水落石出。。。。。  十年前，一起史無前例的兇殺悲劇，導致8人死亡、1人失蹤。一個企圖為自己頻道帶來突破性觀看人數與訂閱戶的YouTuber，想透過尋找唯一的生還者，以調查整起案件撲朔迷離的真相。當採訪開始，隱藏了十年的可怕事實即將被揭露，時隔十年，未竟的復仇邁向終點……。\",\n        \"themeImageUrl\": \"/STILL/3104/3104_863.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    },\n    {\n        \"contentId\": 26706,\n        \"contentType\": 2,\n        \"bufferType\": 1,\n        \"chineseName\": \"怪醫黑傑克 2024\",\n        \"englishName\": \"BLACK JACK\",\n        \"duration\": 93,\n        \"fridayScore\": 3,\n        \"scoreCount\": 0,\n        \"effectiveDateTime\": \"2024-10-09T00:00:00\",\n        \"expireDateTime\": \"2027-07-05T00:00:00\",\n        \"updateEpisode\": -1,\n        \"totalEpisode\": -1,\n        \"area\": \"日本\",\n        \"year\": 2024,\n        \"orderId\": 45,\n        \"imageUrl\": \"/MOVIE/3265/3265_4784.png\",\n        \"paymentTag\": \"1\",\n        \"propertyTag\": null,\n        \"isEmpty\": false,\n        \"rating\": 0,\n        \"isSexual\": false,\n        \"introduction\": \"年輕的住院醫師啟介，一邊讀著身在國外的友人來信，一邊回想他們當年的快樂時光，並盤算著朋友回國後怎麼為他洗塵。可是沒過幾天後，他等到的卻是朋友的骨灰罈，以及放在骨灰罈裡的一樣東西…\",\n        \"themeImageUrl\": \"/STILL/3265/3265_3865.jpg\",\n        \"trailerContentId\": -1,\n        \"trailerStreamingId\": -1,\n        \"trailerDuration\": -1,\n        \"describeTitle\": \"\",\n        \"logoUrl\": \"\",\n        \"aiBgColor\": \"\"\n    }\n]\n\n\n\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/latest-revamp/couchbase",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"latest-revamp",
+								"couchbase"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "couchbase",
+			"item": [
+				{
+					"name": "insert token by template",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"mz6iXcgyxlfzH6gZzhXomdZJiBhK5hmR\",\n    \"effectiveDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"expireDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"platform\": \"PC Web\",\n    \"model\": \"Chrome 12(PC)\",\n    \"scope\": \"member\",\n    \"version\": \"124.0.0.1\",\n    \"udid\": \"1719300035961\",\n    \"fetToken\": \"h4J4iEeilsuaCwsJPceM\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/couchbase/token/template",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"couchbase",
+								"token",
+								"template"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "insert couchbase",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"mz6iXcgyxlfzH6gZzhXomdZJiBhK5hmR\",\n    \"effectiveDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"expireDateTime\": \"2024-10-30T05:41:23.473+00:00\",\n    \"platform\": \"PC Web\",\n    \"model\": \"Chrome 12(PC)\",\n    \"scope\": \"member\",\n    \"version\": \"124.0.0.1\",\n    \"udid\": \"1719300035961\",\n    \"fetToken\": \"h4J4iEeilsuaCwsJPceM\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/couchbase/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"couchbase",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by fetToken",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/couchbase/fetToken/h4J4iEeilsuaCwsJPceM",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"couchbase",
+								"fetToken",
+								"h4J4iEeilsuaCwsJPceM"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get by token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/couchbase/token/mz6iXcgyxlfzH6gZzhXomdZJiBhK5hmR",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"couchbase",
+								"token",
+								"mz6iXcgyxlfzH6gZzhXomdZJiBhK5hmR"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
