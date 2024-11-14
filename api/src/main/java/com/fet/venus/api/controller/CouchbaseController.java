@@ -17,20 +17,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CouchbaseController {
 
-    private final TokenCouchbaseDAOImpl couchbaseDAO;
-
     private final CouchbaseTemplate couchbaseTemplate;
 
     private final TokenCouchbaseRepository repository;
 
     @PostMapping("/token")
-    public void insertCouchbase(@RequestBody Token token) {
-        couchbaseDAO.insertToken(token);
+    public Token insertCouchbase(@RequestBody Token token) {
+        return repository.save(token);
     }
 
-    @GetMapping("/fetToken/{fetToken}")
-    public Token select(@PathVariable String fetToken) {
-        return repository.findAllByFetTokenOrderByExpireDateTimeDesc(fetToken).stream().findFirst().orElse(null);
+    @GetMapping("/token/{token}")
+    public Token insertCouchbase(@PathVariable String token) {
+        return repository.findById(token).orElse(null);
     }
 
     @PostMapping("/token/template")
@@ -38,4 +36,11 @@ public class CouchbaseController {
         return couchbaseTemplate.save(token);
         //return couchbaseTemplate.insertById(Token.class).one(token);
     }
+
+
+    @GetMapping("/fetToken/{fetToken}")
+    public Token select(@PathVariable String fetToken) {
+        return repository.findAllByFetTokenOrderByExpireDateTimeDesc(fetToken).stream().findFirst().orElse(null);
+    }
+
 }

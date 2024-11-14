@@ -6,6 +6,7 @@ import com.fet.venus.db.couchbase.config.CacheKey;
 import com.fet.venus.db.couchbase.dao.CouchbaseCacheDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,6 +19,16 @@ public class TestUserService {
 
     private final CouchbaseCacheDao cacheDao;
 
+    //if from cache, return List<LinkedHashMap>, not List<TestUser>
+    @Cacheable(value = CacheKey.USER_CACHE, key = "'list_user'")
+    public List<TestUser> cacheUser() {
+        return List.of(
+                newUser("a", 10L),
+                newUser("b", 20L),
+                newUser("c", 30L)
+        );
+    }
+
     public TestUser getUser() {
         String cacheName = CacheKey.USER_CACHE;
         String key = "test_user";
@@ -29,7 +40,7 @@ public class TestUserService {
         ).orElse(null);
     }
 
-    protected TestUser newUser(String name, Long age) {
+    public TestUser newUser(String name, Long age) {
         return TestUser.builder()
                 .name(name)
                 .age(age)

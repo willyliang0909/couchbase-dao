@@ -1,3 +1,4 @@
 CREATE INDEX `idx_venus_token_class_fetToken_expireDateTime`
 ON `venus_token`(`_class`, `fetToken`, `expireDateTime`)
-WHERE `_class` = "com.fet.venus.db.models.Token";
+PARTITION BY HASH(fetToken)
+WHERE `_class` = "com.fet.venus.db.models.Token"

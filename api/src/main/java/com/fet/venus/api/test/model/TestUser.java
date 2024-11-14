@@ -23,7 +23,7 @@ public class TestUser implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class Address {
+    public static class Address implements Serializable {
         private String country;
         private String city;
         private String street;

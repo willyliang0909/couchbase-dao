@@ -59,6 +59,13 @@ public class CouchbaseCacheConfig {
                         .collection("data")
                 );
 
+        builder.withCacheConfiguration(CacheKey.BINARY_CACHE,
+                CouchbaseCacheConfiguration
+                        .defaultCacheConfig()
+                        .disableCachingNullValues()
+                        .collection("data")
+        );
+
         return builder.build();
     }
 
