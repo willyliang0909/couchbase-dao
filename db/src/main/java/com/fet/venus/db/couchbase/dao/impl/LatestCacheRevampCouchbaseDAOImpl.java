@@ -26,12 +26,14 @@ public class LatestCacheRevampCouchbaseDAOImpl extends AbstractHibernateDaoImpl<
     @Override
     public List<LatestCacheRevamp> selectLatestList(byte nBufferType) {
         String cacheName = CacheKey.LATEST_REVAMP_CACHE;
-        String key = String.valueOf(nBufferType);
+        String key = "bufferType:" + String.valueOf(nBufferType);
+
         return cacheDao.get(
                 CacheKey.USE_LATEST_REVAMP_CACHE,
                 () -> cacheDao.get(cacheName, key, new TypeReference<>() {}),
                 () -> daojpa.selectLatestList(nBufferType),
                 entity -> cacheDao.save(cacheName, key, entity)
         ).orElse(new ArrayList<>());
+
     }
 }

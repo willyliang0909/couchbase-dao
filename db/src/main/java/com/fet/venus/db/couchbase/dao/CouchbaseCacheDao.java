@@ -50,13 +50,13 @@ public class CouchbaseCacheDao {
             Consumer<T> cacheSaveFunction
     ) {
         if (cacheConfig.isQueryCache(userCacheKey)) {
-            log.info("from cache");
+            log.info("search from cache");
             Optional<T> cacheResult = cacheFunction.get();
             if (cacheResult.isPresent()) {
                 log.info("found in cache");
                 return cacheResult;
             } else {
-                log.info("is not in cache, search from db");
+                log.info("data is not in cache, search from db");
                 T getResult = getFunction.get();
                 if (getResult != null) {
                     log.info("found in db");

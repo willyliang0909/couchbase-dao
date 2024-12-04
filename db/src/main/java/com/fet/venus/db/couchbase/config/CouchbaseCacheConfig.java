@@ -51,19 +51,27 @@ public class CouchbaseCacheConfig {
         JsonTranscoder jsonTranscoder = JsonTranscoder.create(JacksonJsonSerializer.create());
 
         CouchbaseCacheManager.CouchbaseCacheManagerBuilder builder = CouchbaseCacheManager
-                .builder(template.getCouchbaseClientFactory().withScope("cache"))
+                .builder(template.getCouchbaseClientFactory().withScope("friday"))
                 .cacheDefaults(CouchbaseCacheConfiguration
                         .defaultCacheConfig()
                         .disableCachingNullValues()
                         .valueTranscoder(jsonTranscoder)
-                        .collection("data")
+                        .collection("cache")
                 );
 
         builder.withCacheConfiguration(CacheKey.BINARY_CACHE,
                 CouchbaseCacheConfiguration
                         .defaultCacheConfig()
                         .disableCachingNullValues()
-                        .collection("data")
+                        .collection("cache")
+        );
+
+        builder.withCacheConfiguration(CacheKey.LATEST_REVAMP_CACHE,
+                CouchbaseCacheConfiguration
+                        .defaultCacheConfig()
+                        .disableCachingNullValues()
+                        .valueTranscoder(jsonTranscoder)
+                        .collection("venus_latest_cache_revamp")
         );
 
         return builder.build();
